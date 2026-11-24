@@ -1,6 +1,6 @@
 <div align="center">
 
-# MediTrack — Clinical Operations & Healthcare Management Platform
+# Clinix — Clinical Operations & Healthcare Management Platform
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![Django](https://img.shields.io/badge/Django-5.1-0C4B33.svg?logo=django&logoColor=white)](https://djangoproject.com)
@@ -12,7 +12,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
 [![Code Style](https://img.shields.io/badge/Code%20Style-Ruff%20%2B%20Black-000000.svg)](https://github.com/astral-sh/ruff)
 
-**MediTrack** is an enterprise-grade, HIPAA-ready clinical healthcare management platform and provider portal. Built with **Django 5**, **Django REST Framework**, **PostgreSQL 16**, and **Tailwind CSS**, it delivers cryptographic JWT authentication with token rotation, tenant-isolated patient health information (PHI), intelligent multi-specialty physician-patient mapping, an immutable security audit trail, and interactive operational telemetry.
+**Clinix** is an enterprise-grade, HIPAA-ready clinical healthcare management platform and provider portal. Built with **Django 5**, **Django REST Framework**, **PostgreSQL 16**, and **Tailwind CSS**, it delivers cryptographic JWT authentication with token rotation, tenant-isolated patient health information (PHI), intelligent multi-specialty physician-patient mapping, an immutable security audit trail, and interactive operational telemetry.
 
 [Interactive Swagger Docs](http://localhost:8000/api/docs/) • [Postman Collection Guide](docs/POSTMAN_GUIDE.md) • [System Health](http://localhost:8000/api/health/)
 

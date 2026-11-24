@@ -68,7 +68,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const demoLogin = async () => {
-    await login('demo@meditrack.com', 'Password123!');
+    try {
+      await login('demo@clinix.com', 'Password123!');
+    } catch {
+      await login('demo@meditrack.com', 'Password123!');
+    }
   };
 
   const register = async (name: string, email: string, password: string, password2: string) => {

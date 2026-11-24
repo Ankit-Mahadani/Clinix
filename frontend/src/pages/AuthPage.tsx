@@ -89,7 +89,7 @@ export const AuthPage: React.FC = () => {
             </svg>
           </div>
           <h1 className="text-2xl font-black tracking-tight text-[#1E2438]">
-            Mour<span className="text-[#3B4EF8] font-normal text-xs ml-1 bg-[#EEF2FC] px-2 py-0.5 rounded-full">clinic</span>
+            Clinix
           </h1>
           <p className="text-xs text-slate-400 font-medium">Healthcare Management & Clinical Operations</p>
         </div>
@@ -165,7 +165,7 @@ export const AuthPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="doctor@meditrack.com"
+                placeholder="doctor@clinix.com"
                 className="w-full rounded-2xl border border-slate-200/80 bg-[#F6F8FB] py-2.5 pl-10 pr-4 text-xs font-medium text-[#1E2438] placeholder-slate-400 focus:border-[#3B4EF8] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3B4EF8]/10 transition-all"
               />
             </div>
@@ -256,7 +256,7 @@ export const AuthPage: React.FC = () => {
           >
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-[#3B4EF8]" />
-              <span>One-Click Demo (demo@meditrack.com)</span>
+              <span>One-Click Demo (demo@clinix.com)</span>
             </div>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3B4EF8] text-white shadow-xs group-hover:scale-105 transition-transform">
               <ShieldCheck className="h-4 w-4" />

@@ -13,20 +13,29 @@ class Command(BaseCommand):
     help = "Seeds database with realistic demo accounts, patients, doctors, and mappings."
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.NOTICE("Seeding MediTrack demonstration data..."))
+        self.stdout.write(self.style.NOTICE("Seeding Clinix demonstration data..."))
 
-        # 1. Primary Demo User
+        # 1. Primary Demo Users (both clinix.com and meditrack.com for seamless backwards compatibility)
+        demo_clinix_email = "demo@clinix.com"
         demo_email = "demo@meditrack.com"
         demo_password = "Password123!"
-        demo_user, created = User.objects.get_or_create(
-            email=demo_email,
+
+        demo_user, _ = User.objects.get_or_create(
+            email=demo_clinix_email,
             defaults={"name": "Dr. Sarah Jenkins", "is_staff": True},
         )
         demo_user.set_password(demo_password)
         demo_user.save()
 
+        legacy_user, _ = User.objects.get_or_create(
+            email=demo_email,
+            defaults={"name": "Dr. Sarah Jenkins", "is_staff": True},
+        )
+        legacy_user.set_password(demo_password)
+        legacy_user.save()
+
         # 2. Secondary Reviewer User (for testing multi-tenant isolation)
-        reviewer_email = "reviewer@meditrack.com"
+        reviewer_email = "reviewer@clinix.com"
         reviewer_password = "Password123!"
         reviewer_user, _ = User.objects.get_or_create(
             email=reviewer_email,

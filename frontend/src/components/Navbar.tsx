@@ -20,7 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch, onRefresh }) => {
 
   return (
     <header className="flex items-center justify-between gap-4 pb-6 pt-2 border-b border-slate-100">
-      {/* Brand: Icon + "Mour" / "MediTrack" */}
+      {/* Brand: Icon + "Clinix" */}
       <div className="flex items-center gap-2.5 min-w-[200px]">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EEF2FC] text-[#3B4EF8] shadow-xs">
           <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -31,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch, onRefresh }) => {
           </svg>
         </div>
         <span className="text-2xl font-extrabold tracking-tight text-[#1E2438]">
-          Mour<span className="text-[#3B4EF8] font-normal text-xs ml-1 bg-[#EEF2FC] px-1.5 py-0.5 rounded-full">clinic</span>
+          Clinix
         </span>
       </div>
 

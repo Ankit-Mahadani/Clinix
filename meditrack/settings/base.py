@@ -220,13 +220,13 @@ SIMPLE_JWT = {
 
 # drf-spectacular OpenAPI Settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "MediTrack Healthcare API",
+    "TITLE": "Clinix Healthcare API",
     "DESCRIPTION": (
-        "Production-grade healthcare management backend REST API. "
+        "Clinix Production-grade healthcare management backend REST API. "
         "Provides JWT authentication, owner-isolated patient management, doctor catalog, "
         "patient-doctor mappings, automated audit trails, and aggregate dashboard metrics."
     ),
-    "VERSION": "1.0.0",
+    "VERSION": "1.2.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
     "SECURITY": [{"jwt_auth": []}],
