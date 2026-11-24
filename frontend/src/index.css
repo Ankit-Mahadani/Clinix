@@ -2,15 +2,39 @@
 
 @layer base {
   :root {
-    --brand-primary: #0D9488;
-    --brand-dark: #0F766E;
-    --brand-light: #14B8A6;
+    --brand-primary: #3B4EF8;
+    --brand-dark: #2A3BD9;
+    --brand-light: #5B6CFF;
+    --canvas-bg: #EEF2F6;
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    letter-spacing: -0.011em;
+    background-color: #EEF2F6;
+    color: #1E2438;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.012em;
   }
+}
+
+/* Neumorphic & Soft Floating Cards */
+.soft-card {
+  background: #FFFFFF;
+  border-radius: 28px;
+  box-shadow: 0 10px 30px -5px rgba(22, 34, 75, 0.04), 0 4px 10px -2px rgba(22, 34, 75, 0.02);
+  border: 1px solid rgba(235, 240, 248, 0.9);
+}
+
+.soft-card-blue {
+  background: #3B4EF8;
+  color: #FFFFFF;
+  border-radius: 28px;
+  box-shadow: 0 12px 30px -4px rgba(59, 78, 248, 0.35);
+}
+
+.soft-card-pastel {
+  background: #F0F4FE;
+  border-radius: 28px;
+  border: 1px solid rgba(224, 233, 254, 0.8);
 }
 
 /* Glassmorphism */
@@ -21,17 +45,10 @@
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
-.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.5);
-}
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -39,10 +56,6 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D2D9E5;
   border-radius: 9999px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
 }

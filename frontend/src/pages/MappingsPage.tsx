@@ -131,32 +131,32 @@ export const MappingsPage: React.FC = () => {
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-xl font-bold tracking-tight text-[#1E2438]">
           Care Team Assignments & Clinical Mappings
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-400 mt-0.5">
           Coordinate multi-specialty attending teams for your patients. Primary physician rules enforced.
         </p>
       </div>
 
       {/* Assignment Wizard Card */}
-      <div className="rounded-3xl border border-teal-200/60 bg-gradient-to-br from-teal-50/40 via-white to-slate-50 p-6 md:p-8 shadow-xs dark:border-teal-950/80 dark:bg-slate-900">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-600 text-white">
+      <div className="rounded-[28px] border border-slate-100 bg-[#F6F8FB] p-6 shadow-xs">
+        <div className="flex items-center gap-2.5 mb-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#EEF2FC] text-[#3B4EF8]">
             <Link2 className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="text-sm font-bold text-[#1E2438]">
               Assign Doctor Wizard
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-[11px] text-slate-400">
               Link any specialist to your patient in 3 rapid steps
             </p>
           </div>
         </div>
 
         {/* Wizard Step Pills */}
-        <div className="flex items-center gap-2 mb-6 max-w-lg">
+        <div className="flex items-center gap-2 mb-5 max-w-md">
           {[
             { step: 1, title: '1. Select Patient' },
             { step: 2, title: '2. Select Doctor' },
@@ -166,10 +166,10 @@ export const MappingsPage: React.FC = () => {
               key={s.step}
               type="button"
               onClick={() => setWizardStep(s.step)}
-              className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${
+              className={`flex-1 rounded-full py-1.5 text-xs font-bold transition-all ${
                 wizardStep === s.step
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300'
+                  ? 'bg-[#3B4EF8] text-white shadow-xs'
+                  : 'bg-white text-slate-500 hover:bg-slate-100'
               }`}
             >
               {s.title}

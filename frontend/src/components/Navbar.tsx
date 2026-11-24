@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
-import { Search, Plus, Moon, Sun, LogOut, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Search, SlidersHorizontal, RotateCw, ExternalLink, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
-  onNewPatient?: () => void;
   onSearch?: (query: string) => void;
-  isDark: boolean;
-  toggleDark: () => void;
+  onRefresh?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onNewPatient,
-  onSearch,
-  isDark,
-  toggleDark,
-}) => {
-  const { user, logout } = useAuth();
+export const Navbar: React.FC<NavbarProps> = ({ onSearch, onRefresh }) => {
+  const { logout } = useAuth();
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,91 +18,76 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
-  const getInitials = (name?: string) => {
-    if (!name) return 'U';
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/80 px-6 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80 transition-colors">
-      <div className="flex items-center gap-4 flex-1 max-w-md">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+    <header className="flex items-center justify-between gap-4 pb-6 pt-2 border-b border-slate-100">
+      {/* Brand: Icon + "Mour" / "MediTrack" */}
+      <div className="flex items-center gap-2.5 min-w-[200px]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EEF2FC] text-[#3B4EF8] shadow-xs">
+          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
+            <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
+            <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+            <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+          </svg>
+        </div>
+        <span className="text-2xl font-extrabold tracking-tight text-[#1E2438]">
+          Mour<span className="text-[#3B4EF8] font-normal text-xs ml-1 bg-[#EEF2FC] px-1.5 py-0.5 rounded-full">clinic</span>
+        </span>
+      </div>
+
+      {/* Center Search Everything Pill */}
+      <div className="flex-1 max-w-md mx-auto">
+        <div className="relative">
           <input
             id="global-search-input"
             type="text"
             value={searchValue}
             onChange={handleSearchChange}
-            placeholder="Search records, patients, doctors... (Press '/' to focus)"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-10 text-sm text-slate-800 placeholder-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-teal-400"
+            placeholder="Search everything..."
+            className="w-full rounded-full border border-slate-200/70 bg-[#F6F8FB] py-2.5 pl-5 pr-10 text-xs font-medium text-slate-800 placeholder-slate-400 focus:border-[#3B4EF8] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3B4EF8]/10 transition-all shadow-2xs"
           />
-          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-slate-300 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 shadow-xs dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-            /
-          </kbd>
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        {onNewPatient && (
-          <button
-            onClick={onNewPatient}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500/30 transition-all active:scale-95"
-            title="Press 'n' anywhere to add"
-          >
-            <Plus className="h-4 w-4" />
-            <span>New Patient</span>
-            <kbd className="hidden sm:inline-block ml-1 rounded bg-teal-700/60 px-1.5 py-0.2 text-[10px] font-normal text-teal-100">
-              N
-            </kbd>
-          </button>
-        )}
-
-        {/* Theme Toggle */}
+      {/* Right Controls */}
+      <div className="flex items-center gap-2">
         <button
-          onClick={toggleDark}
-          className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
-          title="Toggle theme"
+          onClick={() => {
+            const input = document.getElementById('global-search-input');
+            if (input) input.focus();
+          }}
+          className="rounded-full border border-slate-200/80 p-2 text-slate-500 hover:bg-slate-50 hover:text-[#3B4EF8] transition-colors"
+          title="Filter results"
         >
-          {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+          <SlidersHorizontal className="h-4 w-4" />
         </button>
 
-        {/* Swagger Doc link */}
+        <button
+          onClick={onRefresh || (() => window.location.reload())}
+          className="rounded-full border border-slate-200/80 p-2 text-slate-500 hover:bg-slate-50 hover:text-[#3B4EF8] transition-colors"
+          title="Refresh telemetry"
+        >
+          <RotateCw className="h-4 w-4" />
+        </button>
+
         <a
           href="http://localhost:8000/api/docs/"
           target="_blank"
           rel="noreferrer"
-          className="hidden md:inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-teal-600 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-teal-400 transition-colors"
+          className="hidden sm:inline-flex items-center gap-1 rounded-full bg-[#EEF2FC] px-3 py-1.5 text-[11px] font-bold text-[#3B4EF8] hover:bg-[#E0E7FF] transition-colors"
         >
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ExternalLink className="h-3 w-3" />
           <span>API Docs</span>
         </a>
 
-        {/* User Dropdown / Info */}
-        <div className="flex items-center gap-2.5 pl-2 border-l border-slate-200 dark:border-slate-800">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-100 font-semibold text-teal-700 dark:bg-teal-900/50 dark:text-teal-300">
-            {getInitials(user?.name)}
-          </div>
-          <div className="hidden lg:block text-left leading-tight">
-            <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 dark:text-slate-100">
-              {user?.name || 'Practitioner'}
-              <ShieldCheck className="h-3 w-3 text-teal-500" />
-            </div>
-            <div className="text-[11px] text-slate-400 truncate max-w-[130px]">{user?.email}</div>
-          </div>
-
-          <button
-            onClick={logout}
-            className="ml-1 rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 transition-colors"
-            title="Log out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
-        </div>
+        <button
+          onClick={logout}
+          className="rounded-full p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors ml-1"
+          title="Log out"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </header>
   );

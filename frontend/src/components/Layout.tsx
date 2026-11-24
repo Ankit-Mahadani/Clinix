@@ -6,35 +6,13 @@ import { PatientFormModal } from './PatientFormModal';
 
 export const Layout: React.FC = () => {
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    return (
-      localStorage.getItem('theme') === 'dark' ||
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    );
-  });
-
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
-
-  const toggleDark = () => setIsDark(!isDark);
 
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input or textarea
       const target = e.target as HTMLElement;
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        return;
-      }
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
 
       if (e.key === '/') {
         e.preventDefault();
@@ -51,37 +29,38 @@ export const Layout: React.FC = () => {
   }, []);
 
   const handleGlobalSearch = (query: string) => {
-    // If user is searching from another page, navigate to /patients with query
     if (query.trim()) {
       navigate(`/patients?search=${encodeURIComponent(query)}`);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex transition-colors">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div className="min-h-screen bg-[#EEF2F6] p-3 sm:p-6 lg:p-8 flex items-center justify-center font-sans antialiased text-[#1E2438]">
+      {/* Main Floating Rounded Canvas Container */}
+      <div className="w-full max-w-[1440px] min-h-[850px] rounded-[36px] bg-white p-6 sm:p-8 shadow-[0_20px_60px_-15px_rgba(20,30,65,0.08)] flex flex-col justify-between border border-white/80">
+        {/* Top Navbar */}
         <Navbar
-          onNewPatient={() => setIsPatientModalOpen(true)}
           onSearch={handleGlobalSearch}
-          isDark={isDark}
-          toggleDark={toggleDark}
+          onRefresh={() => window.location.reload()}
         />
 
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          <Outlet />
-        </main>
+        {/* Body Split */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 pt-6 overflow-hidden">
+          {/* Left Column Sidebar */}
+          <Sidebar onNewPatient={() => setIsPatientModalOpen(true)} />
+
+          {/* Center & Right Content View */}
+          <main className="flex-1 overflow-y-auto pr-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
 
-      {/* Add Patient Modal triggered via Navbar or 'n' shortcut */}
+      {/* Patient Creation Modal */}
       <PatientFormModal
         isOpen={isPatientModalOpen}
         onClose={() => setIsPatientModalOpen(false)}
         onSuccess={() => {
-          // If on patients page, reload or refresh
           window.dispatchEvent(new CustomEvent('patient-created'));
         }}
       />

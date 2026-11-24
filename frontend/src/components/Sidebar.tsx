@@ -1,110 +1,105 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Users,
-  UserCheck,
+  Folder,
+  Calendar,
+  Compass,
   Link2,
   History,
-  FileCode2,
-  HeartPulse,
-  Activity,
+  ChevronRight,
+  Plus,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
-  collapsed?: boolean;
+  onNewPatient?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = () => {
+export const Sidebar: React.FC<SidebarProps> = ({ onNewPatient }) => {
+  const { user } = useAuth();
+
   const navItems = [
-    { to: '/', label: 'Overview', icon: LayoutDashboard },
-    { to: '/patients', label: 'Patients', icon: Users },
-    { to: '/doctors', label: 'Doctor Catalog', icon: UserCheck },
+    { to: '/', label: 'My Account', icon: Folder },
+    { to: '/patients', label: 'Calendar / Patients', icon: Calendar },
+    { to: '/doctors', label: 'Discover / Doctors', icon: Compass },
     { to: '/mappings', label: 'Assignments', icon: Link2 },
     { to: '/audit', label: 'Audit Trail', icon: History },
   ];
 
   return (
-    <aside className="sticky top-0 h-screen w-64 flex flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 transition-colors shrink-0">
-      {/* Brand Header */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white shadow-md shadow-teal-500/20">
-          <HeartPulse className="h-6 w-6" />
-        </div>
-        <div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-            Medi<span className="text-teal-600 dark:text-teal-400">Track</span>
-          </span>
-          <span className="ml-1.5 rounded-md bg-teal-50 px-1.5 py-0.5 text-[10px] font-semibold text-teal-700 dark:bg-teal-950/60 dark:text-teal-300">
-            PRO
-          </span>
-        </div>
+    <aside className="w-56 shrink-0 flex flex-col justify-between py-2 pr-4 space-y-6">
+      <div className="space-y-6">
+        {/* "Create New Post" / "Create New Patient" Capsule Button */}
+        {onNewPatient && (
+          <button
+            onClick={onNewPatient}
+            className="w-full flex items-center justify-between pl-4 pr-1.5 py-1.5 rounded-full bg-[#EEF2FC] hover:bg-[#E2EAFA] text-[#3B4EF8] text-xs font-bold transition-all shadow-xs group"
+          >
+            <span>Create New Patient</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3B4EF8] text-white shadow-xs group-hover:scale-105 transition-transform">
+              <Plus className="h-4 w-4" />
+            </div>
+          </button>
+        )}
+
+        {/* Navigation list */}
+        <nav className="space-y-1.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-[#EEF2FC] text-[#3B4EF8] font-bold shadow-2xs'
+                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/80'
+                  }`
+                }
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon className="h-4 w-4 opacity-75" />
+                  <span>{item.label}</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </NavLink>
+            );
+          })}
+        </nav>
       </div>
 
-      {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-        <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-          Clinical Operations
-        </div>
-
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-teal-50 text-teal-700 shadow-xs dark:bg-teal-950/50 dark:text-teal-300 font-semibold'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200'
-                }`
-              }
+      {/* Lower Promo Card & User Footer */}
+      <div className="space-y-5 pt-4">
+        {/* Floating Blue Promo Card */}
+        <div className="rounded-3xl bg-[#3B4EF8] p-4 text-white shadow-lg shadow-[#3B4EF8]/25 relative overflow-hidden">
+          <div className="relative z-10 space-y-2.5">
+            <p className="text-[11px] font-semibold text-white/90 leading-tight">
+              Try the new updated <br />
+              <span className="font-bold text-white text-xs">Version 1.2.0</span>
+            </p>
+            <a
+              href="http://localhost:8000/api/docs/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block rounded-full bg-white px-4 py-1.5 text-[11px] font-bold text-[#3B4EF8] shadow-sm hover:bg-slate-50 active:scale-95 transition-all text-center"
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
-            </NavLink>
-          );
-        })}
-
-        <div className="pt-6 px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-          Developer & System
+              View
+            </a>
+          </div>
         </div>
 
-        <a
-          href="http://localhost:8000/api/docs/"
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors"
-        >
-          <FileCode2 className="h-4 w-4 shrink-0 text-amber-500" />
-          <span>OpenAPI / Swagger</span>
-        </a>
-
-        <a
-          href="http://localhost:8000/api/health/"
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors"
-        >
-          <Activity className="h-4 w-4 shrink-0 text-emerald-500" />
-          <span>System Health Check</span>
-        </a>
-      </div>
-
-      {/* System Status Footer */}
-      <div className="border-t border-slate-200 p-4 dark:border-slate-800">
-        <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/60">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-              API Connected
-            </span>
+        {/* User Avatar Footer */}
+        <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-rose-400 via-purple-400 to-indigo-500 text-white font-bold text-xs shadow-sm">
+            {user?.name ? user.name.slice(0, 2).toUpperCase() : 'DR'}
           </div>
-          <span className="text-[10px] text-slate-400 font-mono">v1.2.0</span>
+          <div className="overflow-hidden">
+            <h4 className="text-xs font-bold text-[#1E2438] truncate">
+              {user?.name || 'Dr. Ann Curgy'}
+            </h4>
+            <p className="text-[10px] text-slate-400 font-medium">Hirurgy Specialist</p>
+          </div>
         </div>
       </div>
     </aside>

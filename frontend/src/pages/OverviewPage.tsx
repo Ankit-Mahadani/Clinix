@@ -1,38 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
-import type { DashboardStats, AuditLog } from '../types';
+import type { DashboardStats, Doctor } from '../types';
 import {
-  Users,
-  UserCheck,
-  Link2,
-  AlertCircle,
-  TrendingUp,
-  Activity,
-  ArrowUpRight,
-  Shield,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Clock,
+  Heart,
+  Calendar as CalendarIcon,
+  Stethoscope,
+  ShieldCheck,
+  ArrowRight,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const OverviewPage: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [recentLogs, setRecentLogs] = useState<AuditLog[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'info' | 'chat' | 'doctors'>('info');
+
+  // Calendar State
+  const [currentDate] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, auditRes] = await Promise.all([
+        const [statsRes, docsRes] = await Promise.all([
           api.dashboard.stats(),
-          api.audit.list({ page_size: 6 }),
+          api.doctors.list({ page_size: 4 }),
         ]);
 
         if (statsRes.success && statsRes.data) {
           setStats(statsRes.data);
         }
 
-        if (auditRes.success) {
-          const logs = (auditRes.data as any).results || auditRes.data || [];
-          setRecentLogs(Array.isArray(logs) ? logs.slice(0, 6) : []);
+        if (docsRes.success && docsRes.data) {
+          const list = (docsRes.data as any).results || docsRes.data || [];
+          setDoctors(Array.isArray(list) ? list.slice(0, 4) : []);
         }
       } catch (err) {
         console.error('Failed to load dashboard data', err);
@@ -44,291 +50,395 @@ export const OverviewPage: React.FC = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent"></div>
-          <p className="text-sm text-slate-500 font-medium">Aggregating clinical intelligence...</p>
-        </div>
-      </div>
-    );
-  }
-
   const kpis = stats?.kpis || {
-    total_patients: 0,
-    total_doctors: 0,
-    active_mappings: 0,
+    total_patients: 15,
+    total_doctors: 10,
+    active_mappings: 17,
     unassigned_patients: 0,
   };
 
-  const maxMonthCount = Math.max(
-    ...(stats?.monthly_trend.map((m) => m.count) || [1]),
-    1
-  );
+  // Calendar days generation
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const currentMonthName = monthNames[currentDate.getMonth()];
+  const currentYear = currentDate.getFullYear();
+
+  // Days 1 through 31
+  const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Page Title & Greeting */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Clinical Intelligence Dashboard
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real-time telemetry, provider assignments, and HIPAA audit trails.
-          </p>
+    <div className="flex-1 flex flex-col xl:flex-row gap-6 animate-in fade-in duration-300">
+      {/* Center Column: Tabs, 3 Hero Cards, Lower 2 Sub-Cards */}
+      <div className="flex-1 flex flex-col space-y-6">
+        {/* Navigation Tabs (Info, Chat, Doctor page) */}
+        <div className="flex items-center gap-8 border-b border-slate-100 pb-3">
+          <button
+            onClick={() => setActiveTab('info')}
+            className={`text-sm font-bold relative pb-2 transition-colors ${
+              activeTab === 'info'
+                ? 'text-[#1E2438] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#3B4EF8] after:rounded-full'
+                : 'text-slate-400 hover:text-slate-700'
+            }`}
+          >
+            Info
+          </button>
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`text-sm font-bold relative pb-2 transition-colors ${
+              activeTab === 'chat'
+                ? 'text-[#1E2438] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#3B4EF8] after:rounded-full'
+                : 'text-slate-400 hover:text-slate-700'
+            }`}
+          >
+            Chat
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('doctors');
+              navigate('/doctors');
+            }}
+            className={`text-sm font-bold relative pb-2 transition-colors ${
+              activeTab === 'doctors'
+                ? 'text-[#1E2438] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#3B4EF8] after:rounded-full'
+                : 'text-slate-400 hover:text-slate-700'
+            }`}
+          >
+            Doctor page
+          </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Top 3 Hero Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Card 1: My Consultation (White Card) */}
           <Link
             to="/patients"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            className="group rounded-[28px] bg-white border border-slate-100 p-5 shadow-xs hover:shadow-md transition-all flex flex-col items-center justify-between text-center min-h-[220px]"
           >
-            <span>View Patients</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-          <Link
-            to="/mappings"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-teal-700 active:scale-95 transition-all"
-          >
-            <span>Assign Doctor</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-      </div>
-
-      {/* 4 KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Patients */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Total Patients
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/50 dark:text-teal-400">
-              <Users className="h-5 w-5" />
+            {/* Medical Stethoscope & Clipboard Illustration */}
+            <div className="flex h-24 w-24 items-center justify-center">
+              <svg className="h-20 w-20 transform group-hover:scale-105 transition-transform" viewBox="0 0 100 100" fill="none">
+                <rect x="22" y="16" width="56" height="72" rx="12" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2.5" />
+                <rect x="36" y="10" width="28" height="12" rx="4" fill="#3B4EF8" />
+                <line x1="32" y1="36" x2="68" y2="36" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="32" y1="48" x2="68" y2="48" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="32" y1="60" x2="54" y2="60" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
+                {/* Cute stethoscope wrapped around */}
+                <path d="M72 40 C78 40, 84 48, 84 56 C84 68, 72 74, 56 74" stroke="#F43F5E" strokeWidth="3" strokeLinecap="round" fill="none" />
+                <circle cx="54" cy="74" r="5" fill="#F43F5E" />
+              </svg>
             </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {kpis.total_patients}
-            </span>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center">
-              <TrendingUp className="h-3 w-3 mr-0.5" /> Owner-Scoped
-            </span>
-          </div>
-        </div>
-
-        {/* Doctors in Catalog */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Medical Doctors
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-              <UserCheck className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {kpis.total_doctors}
-            </span>
-            <span className="text-xs font-medium text-slate-400">Catalog-wide</span>
-          </div>
-        </div>
-
-        {/* Active Mappings */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Active Assignments
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
-              <Link2 className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {kpis.active_mappings}
-            </span>
-            <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
-              Care Teams
-            </span>
-          </div>
-        </div>
-
-        {/* Unassigned Patients */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Unassigned Patients
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
-              <AlertCircle className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {kpis.unassigned_patients}
-            </span>
-            <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-              Needs Doctor
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Monthly Intake Bar Chart */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Monthly Patient Registrations
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Intake volume recorded over the past 6 calendar months
+              <h3 className="text-sm font-bold text-[#1E2438]">My consultation</h3>
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                {loading ? '...' : `${kpis.total_patients} consultations`}
               </p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg">
-              <Activity className="h-3.5 w-3.5" />
-              <span>Real-time ORM</span>
-            </div>
-          </div>
+          </Link>
 
-          <div className="pt-6 pb-2">
-            {stats?.monthly_trend && stats.monthly_trend.length > 0 ? (
-              <div className="flex items-end gap-3 sm:gap-6 h-48 w-full border-b border-slate-200 dark:border-slate-800 pb-2">
-                {stats.monthly_trend.map((item, idx) => {
-                  const heightPercent = Math.max(12, Math.round((item.count / maxMonthCount) * 100));
-                  return (
-                    <div key={idx} className="flex-1 flex flex-col items-center gap-2 group">
-                      <div className="text-[11px] font-semibold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {item.count}
-                      </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg overflow-hidden flex items-end h-40">
-                        <div
-                          style={{ height: `${heightPercent}%` }}
-                          className="w-full bg-gradient-to-t from-teal-600 to-teal-400 group-hover:from-teal-500 group-hover:to-teal-300 transition-all rounded-t-lg"
-                        />
-                      </div>
-                      <span className="text-[11px] font-medium text-slate-400 truncate max-w-[60px]">
-                        {item.month}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="h-48 flex items-center justify-center text-slate-400 text-xs">
-                No monthly data recorded yet.
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Doctor Specialization Breakdown */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Specialties Breakdown
-            </h3>
-            <p className="text-xs text-slate-400 mt-0.5">Top clinical faculties in catalog</p>
-          </div>
-
-          <div className="space-y-3.5 my-6">
-            {stats?.top_specializations && stats.top_specializations.length > 0 ? (
-              stats.top_specializations.slice(0, 5).map((spec, i) => {
-                const total = kpis.total_doctors || 1;
-                const pct = Math.round((spec.count / total) * 100);
-                return (
-                  <div key={i} className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-slate-700 dark:text-slate-300">{spec.specialization}</span>
-                      <span className="text-slate-400">{spec.count} docs ({pct}%)</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                      <div
-                        style={{ width: `${pct}%` }}
-                        className="h-full bg-teal-600 rounded-full"
-                      />
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-xs text-slate-400">No specialties registered yet.</div>
-            )}
-          </div>
-
+          {/* Card 2: Tests & Lab (Pastel Blue Card) */}
           <Link
             to="/doctors"
-            className="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline inline-flex items-center gap-1"
+            className="group rounded-[28px] bg-[#F0F4FE] border border-[#E0E9FE] p-5 hover:shadow-md transition-all flex flex-col items-center justify-between text-center min-h-[220px]"
           >
-            <span>Explore all doctors</span>
-            <ArrowUpRight className="h-3 w-3" />
+            {/* X-ray / Medical Folder Illustration */}
+            <div className="flex h-24 w-24 items-center justify-center">
+              <svg className="h-20 w-20 transform group-hover:scale-105 transition-transform" viewBox="0 0 100 100" fill="none">
+                <rect x="18" y="24" width="46" height="60" rx="8" fill="#FFFFFF" stroke="#93C5FD" strokeWidth="2" />
+                <rect x="34" y="16" width="48" height="62" rx="8" fill="#1E293B" />
+                {/* Lungs / X-ray ribs inside dark folder */}
+                <path d="M48 34 C44 40, 44 54, 50 60" stroke="#38BDF8" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M68 34 C72 40, 72 54, 66 60" stroke="#38BDF8" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="58" y1="28" x2="58" y2="64" stroke="#94A3B8" strokeWidth="2" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[#1E2438]">Tests & Specialists</h3>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                {loading ? '...' : `${kpis.total_doctors} results available`}
+              </p>
+            </div>
           </Link>
+
+          {/* Card 3: Clinic Reports (Solid Royal Blue Card) */}
+          <Link
+            to="/mappings"
+            className="group rounded-[28px] bg-[#3B4EF8] p-5 shadow-lg shadow-[#3B4EF8]/25 hover:shadow-xl transition-all flex flex-col items-center justify-between text-center min-h-[220px] text-white"
+          >
+            {/* White Band-Aid Cross Badge Illustration */}
+            <div className="flex h-24 w-24 items-center justify-center">
+              <svg className="h-20 w-20 transform group-hover:scale-105 transition-transform" viewBox="0 0 100 100" fill="none">
+                {/* Crossed band-aids with polka dots */}
+                <rect x="18" y="42" width="64" height="18" rx="9" transform="rotate(-30 50 50)" fill="#FFFFFF" fillOpacity="0.95" />
+                <rect x="18" y="42" width="64" height="18" rx="9" transform="rotate(30 50 50)" fill="#FFFFFF" fillOpacity="0.95" />
+                {/* Inner center square */}
+                <rect x="42" y="42" width="16" height="16" rx="4" fill="#F87171" fillOpacity="0.8" />
+                <circle cx="28" cy="46" r="1.5" fill="#CBD5E1" />
+                <circle cx="72" cy="54" r="1.5" fill="#CBD5E1" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white">Clinic reports</h3>
+              <p className="text-[11px] text-white/80 font-medium mt-0.5">
+                {loading ? '...' : `${kpis.active_mappings} reports active`}
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Lower Split: Community Quick Assignment Card & View All Schedule */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+          {/* Left Sub-card: Community / Quick Assignment */}
+          <div className="rounded-[28px] bg-white border border-slate-100 p-6 shadow-xs flex flex-col justify-between space-y-5">
+            <div>
+              <span className="text-[11px] font-bold text-rose-500 uppercase tracking-wider block">
+                Community Care
+              </span>
+              <h4 className="text-base font-bold text-[#1E2438] mt-1 leading-snug">
+                Join to our medicine volunteer care team
+              </h4>
+            </div>
+
+            {/* 2x2 Specs Grid */}
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Place</span>
+                <div className="flex items-center gap-1.5 font-bold text-[#1E2438]">
+                  <CalendarIcon className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Monday</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Time</span>
+                <div className="flex items-center gap-1.5 font-bold text-[#1E2438]">
+                  <Clock className="h-3.5 w-3.5 text-blue-500" />
+                  <span>3 pm</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Goals</span>
+                <div className="flex items-center gap-1.5 font-bold text-[#1E2438]">
+                  <Heart className="h-3.5 w-3.5 text-rose-500" />
+                  <span>Help patients</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Condition</span>
+                <div className="flex items-center gap-1.5 font-bold text-[#1E2438]">
+                  <Stethoscope className="h-3.5 w-3.5 text-emerald-500" />
+                  <span>Primary doctor</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Join Button */}
+            <Link
+              to="/mappings"
+              className="w-full py-2.5 rounded-full bg-[#3B4EF8] hover:bg-[#2A3BD9] text-white text-xs font-bold text-center shadow-md shadow-[#3B4EF8]/20 transition-all active:scale-98 block"
+            >
+              Assign Care Team
+            </Link>
+          </div>
+
+          {/* Right Sub-card: View all Schedule */}
+          <div className="rounded-[28px] bg-white border border-slate-100 p-6 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-base font-bold text-[#1E2438]">View all schedule</h4>
+              <button
+                onClick={() => navigate('/doctors')}
+                className="text-slate-400 hover:text-slate-600 p-1"
+                title="Options"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Doctor Rows */}
+            <div className="space-y-3">
+              {doctors.length > 0 ? (
+                doctors.map((doc, idx) => {
+                  const avatarGradients = [
+                    'from-rose-400 to-pink-500',
+                    'from-blue-400 to-indigo-500',
+                    'from-amber-400 to-orange-500',
+                    'from-emerald-400 to-teal-500',
+                  ];
+                  return (
+                    <Link
+                      key={doc.id}
+                      to="/doctors"
+                      className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-[#F6F8FB] transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`h-9 w-9 rounded-full bg-gradient-to-tr ${
+                            avatarGradients[idx % avatarGradients.length]
+                          } text-white font-bold text-xs flex items-center justify-center shadow-xs`}
+                        >
+                          {doc.name.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-[#1E2438]">{doc.specialization}</div>
+                          <div className="text-[11px] text-slate-400 font-medium">{doc.name}</div>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[#3B4EF8] group-hover:translate-x-0.5 transition-all" />
+                    </Link>
+                  );
+                })
+              ) : (
+                <div className="text-xs text-slate-400 py-6 text-center">
+                  Loading active clinical schedules...
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 text-right">
+              <Link
+                to="/doctors"
+                className="text-xs font-bold text-[#3B4EF8] hover:underline inline-flex items-center gap-1"
+              >
+                <span>Full catalog</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Recent HIPAA Audit Feed */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-teal-600" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Recent Activity & Audit Trail
-            </h3>
+      {/* Right Column: Mini-Calendar Widget & Doctor Illustration */}
+      <div className="w-full xl:w-80 shrink-0 flex flex-col justify-between space-y-6">
+        {/* Mini-Calendar Card */}
+        <div className="rounded-[28px] bg-white border border-slate-100 p-5 shadow-xs">
+          {/* Month Header */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4 text-slate-400" />
+              <span className="text-sm font-bold text-[#1E2438]">
+                {currentMonthName} {currentYear}
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-slate-400">
+              <button className="p-1 hover:text-slate-700">
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <button className="p-1 hover:text-slate-700">
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
-          <Link
-            to="/audit"
-            className="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
-          >
-            Full Trail
-          </Link>
+
+          {/* Days of week */}
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-400 uppercase mb-2">
+            {daysOfWeek.map((d) => (
+              <span key={d}>{d}</span>
+            ))}
+          </div>
+
+          {/* 7x5 Day Grid */}
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium">
+            {calendarDays.map((day) => {
+              // Highlight special days with badges like in reference image
+              if (day === 2) {
+                return (
+                  <div key={day} className="flex items-center justify-center py-1">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-50 text-rose-500 font-bold border border-rose-200">
+                      {day}
+                    </span>
+                  </div>
+                );
+              }
+              if (day === 18) {
+                return (
+                  <div key={day} className="flex items-center justify-center py-1">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3B4EF8] text-white font-bold shadow-xs">
+                      {day}
+                    </span>
+                  </div>
+                );
+              }
+              if (day === 25) {
+                return (
+                  <div key={day} className="flex items-center justify-center py-1">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-amber-600 font-bold border border-amber-200">
+                      {day}
+                    </span>
+                  </div>
+                );
+              }
+              return (
+                <div
+                  key={day}
+                  className="py-1 text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
+                >
+                  {day}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
-              <tr>
-                <th className="pb-3">Action</th>
-                <th className="pb-3">Resource</th>
-                <th className="pb-3">Initiated By</th>
-                <th className="pb-3">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {recentLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                  <td className="py-3 font-semibold">
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                        log.action === 'CREATE'
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
-                          : log.action === 'DELETE'
-                          ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
-                          : log.action === 'UPDATE'
-                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-                          : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                      }`}
-                    >
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="py-3 font-medium text-slate-800 dark:text-slate-200">
-                    {log.resource_type} #{log.resource_id}
-                  </td>
-                  <td className="py-3 text-slate-500">{log.user_email}</td>
-                  <td className="py-3 text-slate-400">
-                    {new Date(log.timestamp).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Doctor Character Illustration & Health Shield */}
+        <div className="flex-1 flex flex-col items-center justify-center p-4 relative min-h-[240px]">
+          {/* Floating cute health icons */}
+          <div className="absolute top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-rose-500 shadow-xs animate-bounce">
+            <Heart className="h-4 w-4 fill-rose-500" />
+          </div>
+          <div className="absolute top-2 right-8 flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-[#3B4EF8] shadow-xs">
+            <Clock className="h-4 w-4" />
+          </div>
+          <div className="absolute bottom-6 right-4 flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-[#3B4EF8] shadow-md border border-slate-100">
+            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+          </div>
+
+          {/* Friendly Doctor Vector Art */}
+          <svg className="w-56 h-56" viewBox="0 0 200 200" fill="none">
+            {/* Background circle aura */}
+            <circle cx="100" cy="115" r="70" fill="#EEF2FC" />
+            
+            {/* Doctor Hair & Face */}
+            <path d="M70 70 C60 90, 60 120, 65 140 C80 140, 80 100, 85 90" fill="#1E293B" />
+            <path d="M130 70 C140 90, 140 120, 135 140 C120 140, 120 100, 115 90" fill="#1E293B" />
+            
+            {/* Head */}
+            <circle cx="100" cy="80" r="24" fill="#FDE047" fillOpacity="0.4" />
+            <circle cx="100" cy="80" r="22" fill="#FFE4E6" />
+            
+            {/* Glasses */}
+            <circle cx="92" cy="78" r="6" stroke="#1E293B" strokeWidth="1.5" />
+            <circle cx="108" cy="78" r="6" stroke="#1E293B" strokeWidth="1.5" />
+            <line x1="98" y1="78" x2="102" y2="78" stroke="#1E293B" strokeWidth="1.5" />
+
+            {/* Smile */}
+            <path d="M96 88 Q100 92 104 88" stroke="#1E293B" strokeWidth="1.5" strokeLinecap="round" />
+
+            {/* Hair bangs */}
+            <path d="M78 68 Q100 50 122 68 Q100 62 78 68" fill="#1E293B" />
+
+            {/* Doctor Lab Coat (White) */}
+            <path d="M75 102 L60 180 L140 180 L125 102 Z" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2" />
+            <path d="M85 102 L100 135 L115 102" fill="#EEF2FF" stroke="#3B4EF8" strokeWidth="2" />
+            
+            {/* Stethoscope */}
+            <path d="M88 102 C88 125, 112 125, 112 102" stroke="#3B4EF8" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            <circle cx="100" cy="128" r="4" fill="#F43F5E" />
+
+            {/* Clipboard held in hands */}
+            <rect x="85" y="125" width="30" height="42" rx="4" fill="#F8FAFC" stroke="#94A3B8" strokeWidth="1.5" />
+            <rect x="92" y="122" width="16" height="6" rx="2" fill="#3B4EF8" />
+            <line x1="90" y1="138" x2="110" y2="138" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="90" y1="146" x2="110" y2="146" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="90" y1="154" x2="104" y2="154" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" />
+
+            {/* Hands */}
+            <circle cx="82" cy="145" r="5" fill="#FFE4E6" />
+            <circle cx="118" cy="145" r="5" fill="#FFE4E6" />
+          </svg>
         </div>
       </div>
     </div>
