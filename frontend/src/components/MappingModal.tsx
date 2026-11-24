@@ -88,20 +88,19 @@ export const MappingModal: React.FC<MappingModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl bg-rose-50 p-3 text-xs font-medium text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-900">
+          <div className="rounded-2xl bg-rose-50 p-3.5 text-xs font-semibold text-rose-700 border border-rose-200">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+          <label className="block text-xs font-bold text-slate-600 mb-1">
             Select Patient *
           </label>
           <select
             value={patientId}
             onChange={(e) => setPatientId(Number(e.target.value))}
-            required
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none cursor-pointer"
           >
             {patients.map((p) => (
               <option key={p.id} value={p.id}>
@@ -112,14 +111,13 @@ export const MappingModal: React.FC<MappingModalProps> = ({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Select Doctor *
+          <label className="block text-xs font-bold text-slate-600 mb-1">
+            Select Attending Doctor *
           </label>
           <select
             value={doctorId}
             onChange={(e) => setDoctorId(Number(e.target.value))}
-            required
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none cursor-pointer"
           >
             {doctors.map((d) => (
               <option key={d.id} value={d.id}>
@@ -129,52 +127,52 @@ export const MappingModal: React.FC<MappingModalProps> = ({
           </select>
         </div>
 
-        <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-3.5 dark:border-teal-900/40 dark:bg-teal-950/20">
+        <div className="rounded-2xl border border-[#DCE4FB] bg-[#F0F4FE] p-4">
           <label className="flex items-start gap-2.5 cursor-pointer">
             <input
               type="checkbox"
               checked={isPrimary}
               onChange={(e) => setIsPrimary(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#3B4EF8] focus:ring-[#3B4EF8]"
             />
             <div>
-              <span className="text-xs font-bold text-teal-900 dark:text-teal-200">
-                Designate as Primary Physician
+              <span className="text-xs font-bold text-[#1E2438]">
+                Designate as Primary Attending Physician
               </span>
-              <p className="text-[11px] text-teal-700/80 dark:text-teal-400 mt-0.5">
-                Each patient can have only ONE primary physician. Marking this will replace any existing primary designation.
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                A patient may only have one active primary physician at any given time.
               </p>
             </div>
           </label>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Clinical Assignment Notes
+          <label className="block text-xs font-bold text-slate-600 mb-1">
+            Clinical Assignment Notes (Optional)
           </label>
           <textarea
-            rows={2}
+            rows={3}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="e.g. Lead cardiologist supervising post-infarction rehab..."
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            placeholder="e.g. Lead cardiologist monitoring post-op recovery protocol..."
+            className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] placeholder-slate-400 focus:border-[#3B4EF8] focus:outline-none"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="rounded-full border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-[#F6F8FB] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50"
+            className="rounded-full bg-[#3B4EF8] hover:bg-[#2A3BD9] px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-[#3B4EF8]/20 disabled:opacity-50 transition-colors cursor-pointer"
           >
-            {loading ? 'Assigning...' : 'Confirm Assignment'}
+            {loading ? 'Assigning...' : 'Assign to Patient'}
           </button>
         </div>
       </form>

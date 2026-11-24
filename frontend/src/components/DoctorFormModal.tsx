@@ -66,13 +66,13 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
     setError(null);
 
     const payload: Partial<Doctor> = {
-      name: formData.name,
+      name: formData.name.trim(),
       specialization: formData.specialization,
-      license_number: formData.license_number,
+      license_number: formData.license_number.trim(),
       years_of_experience: parseInt(formData.years_of_experience, 10),
-      hospital: formData.hospital,
-      phone: formData.phone,
-      email: formData.email,
+      hospital: formData.hospital.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
       consultation_fee: formData.consultation_fee,
       availability: formData.availability,
     };
@@ -107,24 +107,40 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
     }
   };
 
+  const specialtiesList = [
+    'Cardiology',
+    'Dermatology',
+    'Endocrinology',
+    'Gastroenterology',
+    'General Medicine',
+    'Neurology',
+    'Oncology',
+    'Orthopedics',
+    'Pediatrics',
+    'Psychiatry',
+    'Pulmonology',
+    'Radiology',
+    'Surgery',
+  ];
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={doctorToEdit ? 'Edit Doctor Profile' : 'Register New Medical Doctor'}
-      description="Doctors registered in the catalog can be assigned to patient clinical teams."
+      title={doctorToEdit ? 'Edit Physician Profile' : 'Register Medical Specialist'}
+      description="Register an accredited provider into the clinical directory."
       maxWidth="xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl bg-rose-50 p-3 text-xs font-medium text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-900">
+          <div className="rounded-2xl bg-rose-50 p-3.5 text-xs font-semibold text-rose-700 border border-rose-200">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1">
               Physician Name *
             </label>
             <input
@@ -132,44 +148,45 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Dr. Sarah Jenkins"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="e.g. Dr. Maya Lin Tanaka"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none focus:ring-2 focus:ring-[#3B4EF8]/10"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1">
               Medical Specialty *
             </label>
-            <input
-              type="text"
-              required
+            <select
               value={formData.specialization}
               onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-              placeholder="e.g. Cardiology, Neurology"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-            />
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-bold text-slate-700 focus:border-[#3B4EF8] focus:outline-none cursor-pointer"
+            >
+              {specialtiesList.map((spec) => (
+                <option key={spec} value={spec}>
+                  {spec}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              License Number (Unique) *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              State License Number *
             </label>
             <input
               type="text"
               required
               value={formData.license_number}
               onChange={(e) => setFormData({ ...formData, license_number: e.target.value })}
-              placeholder="MD-89211-US"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="e.g. MED-884920"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Experience (Years) *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              Years of Practice *
             </label>
             <input
               type="number"
@@ -178,100 +195,96 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
               max={70}
               value={formData.years_of_experience}
               onChange={(e) => setFormData({ ...formData, years_of_experience: e.target.value })}
-              placeholder="12"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Hospital / Clinic *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              Primary Hospital / Clinic *
             </label>
             <input
               type="text"
               required
               value={formData.hospital}
               onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}
-              placeholder="Metropolitan General Hospital"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="e.g. Johns Hopkins Medical"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Consultation Fee ($) *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              Consultation Fee ($ USD) *
             </label>
             <input
-              type="text"
+              type="number"
+              step="0.01"
               required
+              min={0}
               value={formData.consultation_fee}
               onChange={(e) => setFormData({ ...formData, consultation_fee: e.target.value })}
-              placeholder="180.00"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="150.00"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Phone Number *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              Office Phone *
             </label>
             <input
               type="tel"
               required
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+1-555-0144"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="+1 (555) 019-2834"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Email Address *
+            <label className="block text-xs font-bold text-slate-600 mb-1">
+              Direct Email *
             </label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="dr.jenkins@hospital.org"
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              placeholder="doctor@hospital.org"
+              className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Availability Schedule *
+          <label className="block text-xs font-bold text-slate-600 mb-1">
+            Weekly Availability Schedule
           </label>
           <input
             type="text"
-            required
             value={formData.availability}
             onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-            placeholder="Mon-Thu 08:30 - 16:30"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            placeholder="Mon-Fri 09:00 - 17:00"
+            className="w-full rounded-2xl border border-slate-200 bg-[#F6F8FB] focus:bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1E2438] focus:border-[#3B4EF8] focus:outline-none"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="rounded-full border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-[#F6F8FB] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50"
+            className="rounded-full bg-[#3B4EF8] hover:bg-[#2A3BD9] px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-[#3B4EF8]/20 disabled:opacity-50 transition-colors cursor-pointer"
           >
-            {loading ? 'Saving...' : doctorToEdit ? 'Save Changes' : 'Register Doctor'}
+            {loading ? 'Saving Profile...' : doctorToEdit ? 'Save Changes' : 'Register Doctor'}
           </button>
         </div>
       </form>

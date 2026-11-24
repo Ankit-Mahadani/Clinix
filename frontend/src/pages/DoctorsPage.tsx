@@ -103,7 +103,7 @@ export const DoctorsPage: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by physician name or hospital..."
-            className="w-full rounded-full border border-slate-200/80 bg-white py-2 pl-9 pr-4 text-xs font-medium text-slate-800 placeholder-slate-400 focus:border-[#3B4EF8] focus:outline-none focus:ring-2 focus:ring-[#3B4EF8]/10"
+            className="w-full rounded-full border border-slate-200/80 bg-white py-2 pl-9 pr-4 text-xs font-semibold text-[#1E2438] placeholder-slate-400 focus:border-[#3B4EF8] focus:outline-none focus:ring-2 focus:ring-[#3B4EF8]/10"
           />
         </div>
 
@@ -112,7 +112,7 @@ export const DoctorsPage: React.FC = () => {
           <select
             value={selectedSpecialty}
             onChange={(e) => setSelectedSpecialty(e.target.value)}
-            className="rounded-full border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 focus:border-[#3B4EF8] focus:outline-none"
+            className="rounded-full border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 focus:border-[#3B4EF8] focus:outline-none cursor-pointer"
           >
             <option value="">All Specialties</option>
             {specialties.map((s) => (
@@ -123,10 +123,10 @@ export const DoctorsPage: React.FC = () => {
           </select>
 
           {/* Grid vs Table Toggle */}
-          <div className="flex items-center rounded-full bg-white border border-slate-200/80 p-0.5">
+          <div className="flex items-center rounded-full bg-white border border-slate-200/80 p-0.5 shadow-2xs">
             <button
               onClick={() => setViewMode('grid')}
-              className={`rounded-full p-1.5 transition-all ${
+              className={`rounded-full p-1.5 transition-all cursor-pointer ${
                 viewMode === 'grid'
                   ? 'bg-[#3B4EF8] text-white shadow-2xs'
                   : 'text-slate-400 hover:text-slate-700'
@@ -137,7 +137,7 @@ export const DoctorsPage: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`rounded-full p-1.5 transition-all ${
+              className={`rounded-full p-1.5 transition-all cursor-pointer ${
                 viewMode === 'table'
                   ? 'bg-[#3B4EF8] text-white shadow-2xs'
                   : 'text-slate-400 hover:text-slate-700'
@@ -156,7 +156,7 @@ export const DoctorsPage: React.FC = () => {
           {loading ? (
             <div className="col-span-full py-16 text-center text-slate-400">
               <div className="flex flex-col items-center gap-2">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-600 border-t-transparent"></div>
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#3B4EF8] border-t-transparent"></div>
                 <span>Loading physician catalog...</span>
               </div>
             </div>
@@ -168,18 +168,18 @@ export const DoctorsPage: React.FC = () => {
             doctors.map((d) => (
               <div
                 key={d.id}
-                className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:shadow-md transition-all dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between"
+                className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="inline-block rounded-md bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700 dark:bg-teal-950/60 dark:text-teal-300">
+                      <span className="inline-block rounded-full bg-[#EEF2FC] px-2.5 py-0.5 text-[11px] font-bold text-[#3B4EF8]">
                         {d.specialization}
                       </span>
-                      <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1.5">
+                      <h3 className="text-base font-bold text-[#1E2438] mt-2">
                         {d.name}
                       </h3>
-                      <p className="text-xs text-slate-400">Lic. #{d.license_number}</p>
+                      <p className="text-[11px] text-slate-400">Lic. #{d.license_number}</p>
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -190,14 +190,14 @@ export const DoctorsPage: React.FC = () => {
                               setDoctorToEdit(d);
                               setIsFormModalOpen(true);
                             }}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800"
+                            className="rounded-full p-1.5 text-slate-400 hover:bg-[#EEF2FC] hover:text-[#3B4EF8] transition-colors cursor-pointer"
                             title="Edit Doctor"
                           >
                             <Edit2 className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => setDoctorToDelete(d)}
-                            className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                            className="rounded-full p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
                             title="Delete Doctor"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -205,7 +205,7 @@ export const DoctorsPage: React.FC = () => {
                         </>
                       ) : (
                         <span
-                          className="rounded-lg p-1.5 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                          className="rounded-full p-1.5 text-slate-300 cursor-not-allowed"
                           title="Read-only: created by another user"
                         >
                           <Lock className="h-3.5 w-3.5" />
@@ -214,29 +214,29 @@ export const DoctorsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-3">
+                  <div className="mt-4 space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-3.5">
                     <div className="flex items-center gap-2">
                       <Building className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{d.hospital}</span>
+                      <span className="truncate font-medium">{d.hospital}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Award className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span>{d.years_of_experience} years clinical practice</span>
+                      <span className="font-medium">{d.years_of_experience} years clinical practice</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span>{d.phone}</span>
+                      <span className="font-medium">{d.phone}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{d.email}</span>
+                      <span className="truncate font-medium">{d.email}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Consultation</span>
-                  <span className="font-bold text-teal-700 dark:text-teal-300">
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-slate-400 font-medium">Consultation Fee</span>
+                  <span className="font-bold text-[#3B4EF8] text-sm">
                     ${Number(d.consultation_fee).toFixed(2)}
                   </span>
                 </div>
@@ -246,39 +246,39 @@ export const DoctorsPage: React.FC = () => {
         </div>
       ) : (
         /* Doctors Table View */
-        <div className="rounded-2xl border border-slate-200/80 bg-white shadow-xs overflow-hidden dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-[28px] border border-slate-100 bg-white shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/75 border-b border-slate-200/80 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-slate-800/50 dark:border-slate-800 dark:text-slate-400">
+              <thead className="bg-[#F6F8FB] border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="py-3.5 px-4">Physician</th>
-                  <th className="py-3.5 px-4">Specialty</th>
-                  <th className="py-3.5 px-4">Hospital</th>
-                  <th className="py-3.5 px-4">Experience</th>
-                  <th className="py-3.5 px-4">Consultation Fee</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-5">Physician</th>
+                  <th className="py-3.5 px-5">Specialty</th>
+                  <th className="py-3.5 px-5">Hospital</th>
+                  <th className="py-3.5 px-5">Experience</th>
+                  <th className="py-3.5 px-5">Consultation Fee</th>
+                  <th className="py-3.5 px-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-slate-100">
                 {doctors.map((d) => (
-                  <tr key={d.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                    <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
+                  <tr key={d.id} className="hover:bg-[#F9FAFC] transition-colors">
+                    <td className="py-3.5 px-5 font-bold text-[#1E2438]">
                       <div>{d.name}</div>
-                      <div className="text-xs text-slate-400">Lic. #{d.license_number}</div>
+                      <div className="text-[11px] text-slate-400">Lic. #{d.license_number}</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="rounded bg-teal-50 px-2 py-0.5 text-xs font-bold text-teal-700 dark:bg-teal-950/60 dark:text-teal-300">
+                    <td className="py-3.5 px-5">
+                      <span className="rounded-full bg-[#EEF2FC] px-2.5 py-0.5 text-[11px] font-bold text-[#3B4EF8]">
                         {d.specialization}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{d.hospital}</td>
-                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
+                    <td className="py-3.5 px-5 text-xs text-slate-600 font-medium">{d.hospital}</td>
+                    <td className="py-3.5 px-5 text-xs text-slate-600 font-medium">
                       {d.years_of_experience} yrs
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-teal-700 dark:text-teal-300">
+                    <td className="py-3.5 px-5 font-bold text-[#3B4EF8] text-xs">
                       ${Number(d.consultation_fee).toFixed(2)}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3.5 px-5 text-right">
                       {d.is_creator ? (
                         <div className="flex items-center justify-end gap-1">
                           <button
@@ -286,14 +286,14 @@ export const DoctorsPage: React.FC = () => {
                               setDoctorToEdit(d);
                               setIsFormModalOpen(true);
                             }}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800"
+                            className="rounded-full p-1.5 text-slate-400 hover:bg-[#EEF2FC] hover:text-[#3B4EF8] transition-colors"
                             title="Edit"
                           >
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => setDoctorToDelete(d)}
-                            className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50"
+                            className="rounded-full p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -330,22 +330,22 @@ export const DoctorsPage: React.FC = () => {
         maxWidth="md"
       >
         <div className="space-y-4">
-          <p className="text-xs text-slate-600 dark:text-slate-300">
+          <p className="text-xs text-slate-600">
             Are you sure you want to delete <strong>{doctorToDelete?.name}</strong>? Any active
             patient assignments to this doctor will be removed.
           </p>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <button
               onClick={() => setDoctorToDelete(null)}
-              className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded-full border border-slate-200 px-5 py-2 text-xs font-bold text-slate-600 hover:bg-[#F6F8FB] transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleDeleteConfirm}
               disabled={deleteLoading}
-              className="rounded-xl bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+              className="rounded-full bg-rose-600 px-5 py-2 text-xs font-bold text-white hover:bg-rose-700 disabled:opacity-50 shadow-md shadow-rose-600/20 transition-colors"
             >
               {deleteLoading ? 'Deleting...' : 'Confirm Delete'}
             </button>
