@@ -36,6 +36,13 @@ class PatientDoctorMappingSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "assigned_at", "created_at", "updated_at")
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=PatientDoctorMapping.objects.all(),
+                fields=("patient", "doctor"),
+                message="This doctor is already assigned to this patient.",
+            )
+        ]
 
     def validate_patient(self, value):
         request = self.context.get("request")

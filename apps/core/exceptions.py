@@ -48,12 +48,11 @@ def custom_exception_handler(exc, context):
     }
     error_code = code_mapping.get(status_code, "API_ERROR")
 
-    # If exception itself defined a custom code
-    if hasattr(exc, "default_code") and isinstance(exc.default_code, str):
-        if exc.default_code in ["duplicate", "unique"]:
-            error_code = "DUPLICATE_ENTRY"
-
+    # Check for duplicate / uniqueness errors inside details
     details = response.data
+    raw_str = str(details).lower()
+    if "unique" in raw_str or "already assigned" in raw_str or "already exists" in raw_str:
+        error_code = "DUPLICATE_ENTRY"
     message = "Request failed."
 
     # Parse details & message
