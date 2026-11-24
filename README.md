@@ -276,8 +276,19 @@ python manage.py runserver 0.0.0.0:8000
 ```
 
 Open your browser to:
-- **Web Dashboard**: `http://localhost:8000`
-- **Swagger Documentation**: `http://localhost:8000/api/docs/`
+- **Zero-Tooling Web Dashboard**: `http://localhost:8000` (Django templates + Tailwind CDN + Vanilla JS)
+- **Dedicated React SPA Dashboard**: `http://localhost:3000` (React 19 + TypeScript + Vite + Tailwind CSS)
+- **Interactive Swagger / OpenAPI 3.0**: `http://localhost:8000/api/docs/`
+- **ReDoc Documentation**: `http://localhost:8000/api/redoc/`
+- **Health Check Endpoint**: `http://localhost:8000/api/health/`
+
+To run the React SPA locally:
+```bash
+cd frontend
+npm install
+npm run dev
+# Vite server live at http://localhost:3000
+```
 
 ---
 

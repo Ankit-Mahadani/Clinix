@@ -1,4 +1,4 @@
-.PHONY: help run test test-cov seed lint format migrate makemigrations clean
+.PHONY: help run test test-cov seed lint format migrate makemigrations clean frontend-dev frontend-build
 
 help:
 	@echo "MediTrack Healthcare Management Platform"
@@ -11,6 +11,14 @@ help:
 	@echo "  make format          Format codebase with ruff and black"
 	@echo "  make migrate         Apply database migrations"
 	@echo "  make makemigrations  Generate database migrations"
+	@echo "  make frontend-dev    Start Vite React frontend (port 3000)"
+	@echo "  make frontend-build  Compile Vite React frontend production build"
+
+frontend-dev:
+	cd frontend && npm run dev
+
+frontend-build:
+	cd frontend && npm run build
 
 run:
 	python manage.py runserver 0.0.0.0:8000

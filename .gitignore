@@ -36,3 +36,8 @@ coverage.xml
 # OS
 .DS_Store
 Thumbs.db
+
+# Frontend
+node_modules/
+dist/
+.vite/

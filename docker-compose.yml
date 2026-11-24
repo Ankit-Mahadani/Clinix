@@ -52,6 +52,19 @@ services:
     networks:
       - meditrack_network
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: meditrack_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web
+    networks:
+      - meditrack_network
+
 volumes:
   postgres_data:
     name: meditrack_postgres_data
