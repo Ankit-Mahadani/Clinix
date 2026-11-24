@@ -147,10 +147,10 @@ export const AuthPage: React.FC = () => {
             </span>
           </div>
 
-          {/* Glass Card */}
-          <div className="glass-panel rounded-3xl p-8 shadow-2xl border border-slate-700/60 bg-slate-900/70 backdrop-blur-xl">
+          {/* Auth Card */}
+          <div className="rounded-3xl p-8 shadow-2xl border border-slate-700/80 bg-slate-900/90 backdrop-blur-xl">
             {/* Tab switch */}
-            <div className="flex rounded-xl bg-slate-800/80 p-1 mb-6 border border-slate-700/50">
+            <div className="flex rounded-xl bg-slate-800/90 p-1 mb-6 border border-slate-700/60">
               <button
                 type="button"
                 onClick={() => {
@@ -298,17 +298,17 @@ export const AuthPage: React.FC = () => {
             </form>
 
             {/* Quick Demo Access */}
-            <div className="mt-6 pt-5 border-t border-slate-800/80">
+            <div className="mt-6 pt-5 border-t border-slate-800">
               <button
                 type="button"
                 onClick={handleDemoClick}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 rounded-xl border border-teal-500/30 bg-teal-500/10 py-2.5 text-xs font-semibold text-teal-300 hover:bg-teal-500/20 active:scale-98 transition-all"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-teal-950/80 border-2 border-teal-500/70 hover:border-teal-400 hover:bg-teal-900/90 py-3 px-4 text-xs font-bold text-teal-200 active:scale-98 transition-all shadow-md group cursor-pointer"
               >
-                <Sparkles className="h-4 w-4 text-teal-400" />
-                <span>One-Click Demo Login (demo@meditrack.com)</span>
+                <Sparkles className="h-4 w-4 text-teal-300 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="tracking-wide">One-Click Demo Login (demo@meditrack.com)</span>
               </button>
-              <p className="mt-2 text-center text-[11px] text-slate-500">
+              <p className="mt-2.5 text-center text-xs font-medium text-slate-400">
                 Pre-seeded with 15 patients, 10 specialists, and primary care mappings.
               </p>
             </div>
