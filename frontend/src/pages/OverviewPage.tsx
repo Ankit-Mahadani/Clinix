@@ -160,8 +160,82 @@ export const OverviewPage: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  // Calendar State
-  const [currentDate] = useState(new Date());
+  // Calendar & Schedule State
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<number>(currentDate.getDate());
+
+  // Consultation appointments mapped by date
+  const scheduleAppointments: Record<number, Array<{
+    id: string;
+    time: string;
+    doctor: string;
+    specialty: string;
+    patient: string;
+    status: 'Confirmed' | 'In Progress' | 'Scheduled';
+  }>> = {
+    2: [
+      {
+        id: 'a1',
+        time: '09:30 AM',
+        doctor: 'Dr. Amira Al-Mansoor',
+        specialty: 'Psychiatry',
+        patient: 'Fatima Zahra Khan',
+        status: 'Confirmed',
+      },
+      {
+        id: 'a2',
+        time: '02:00 PM',
+        doctor: 'Dr. Ethan Williams',
+        specialty: 'Endocrinology',
+        patient: 'Lucas Jean Dupont',
+        status: 'Scheduled',
+      },
+    ],
+    18: [
+      {
+        id: 'a3',
+        time: '10:00 AM',
+        doctor: 'Dr. Ethan Williams',
+        specialty: 'Endocrinology',
+        patient: 'Lucas Jean Dupont',
+        status: 'In Progress',
+      },
+      {
+        id: 'a4',
+        time: '01:30 PM',
+        doctor: 'Dr. Amira Al-Mansoor',
+        specialty: 'Psychiatry',
+        patient: 'Fatima Zahra Khan',
+        status: 'Confirmed',
+      },
+      {
+        id: 'a5',
+        time: '04:15 PM',
+        doctor: 'Dr. Maya Lin Tanaka',
+        specialty: 'Cardiology',
+        patient: 'James Alexander Wilson',
+        status: 'Scheduled',
+      },
+    ],
+    25: [
+      {
+        id: 'a6',
+        time: '11:00 AM',
+        doctor: 'Dr. Marcus Vance',
+        specialty: 'Neurology',
+        patient: 'Harper Grace Evans',
+        status: 'Scheduled',
+      },
+      {
+        id: 'a7',
+        time: '03:45 PM',
+        doctor: 'Dr. Sarah Jenkins',
+        specialty: 'Pediatrics',
+        patient: 'Liam Noah Gallagher',
+        status: 'Confirmed',
+      },
+    ],
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,7 +270,7 @@ export const OverviewPage: React.FC = () => {
     unassigned_patients: 0,
   };
 
-  // Calendar days generation
+  // Dynamic Calendar calculations
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -204,7 +278,25 @@ export const OverviewPage: React.FC = () => {
   ];
   const currentMonthName = monthNames[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
-  const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
+  const currentMonth = currentDate.getMonth();
+
+  // Days in current month
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  // First day of month (convert Sunday=0 to Monday=0)
+  const firstDayIndex = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
+  
+  // Empty slots for previous month padding
+  const paddingDays = Array.from({ length: firstDayIndex }, (_, i) => i);
+  // Current month day numbers
+  const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+  };
 
   // Send message in Chat Tab
   const handleSendMessage = (e?: React.FormEvent) => {
@@ -812,71 +904,139 @@ export const OverviewPage: React.FC = () => {
       {/* Right Column: Mini-Calendar Widget & Doctor Illustration */}
       <div className="w-full xl:w-80 shrink-0 flex flex-col justify-between space-y-6">
         {/* Mini-Calendar Card */}
-        <div className="rounded-[28px] bg-white border border-slate-100 p-5 shadow-xs">
+        <div className="rounded-[28px] bg-white border border-slate-100 p-5 shadow-xs space-y-4">
           {/* Month Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4 text-slate-400" />
+              <CalendarIcon className="h-4 w-4 text-[#3B4EF8]" />
               <span className="text-sm font-bold text-[#1E2438]">
                 {currentMonthName} {currentYear}
               </span>
             </div>
-            <div className="flex items-center gap-1 text-slate-400">
-              <button className="p-1 hover:text-slate-700 cursor-pointer">
-                <ChevronLeft className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handlePrevMonth}
+                className="p-1 rounded-full text-slate-400 hover:bg-[#F6F8FB] hover:text-[#1E2438] transition-colors cursor-pointer"
+                title="Previous month"
+              >
+                <ChevronLeft className="h-4 w-4" />
               </button>
-              <button className="p-1 hover:text-slate-700 cursor-pointer">
-                <ChevronRight className="h-3.5 w-3.5" />
+              <button
+                onClick={() => {
+                  const today = new Date();
+                  setCurrentDate(today);
+                  setSelectedDay(today.getDate());
+                }}
+                className="px-2 py-0.5 rounded-full text-[10px] font-bold text-[#3B4EF8] bg-[#EEF2FC] hover:bg-[#E0E9FD] transition-colors cursor-pointer"
+                title="Jump to today"
+              >
+                Today
+              </button>
+              <button
+                onClick={handleNextMonth}
+                className="p-1 rounded-full text-slate-400 hover:bg-[#F6F8FB] hover:text-[#1E2438] transition-colors cursor-pointer"
+                title="Next month"
+              >
+                <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
 
           {/* Days of week */}
-          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-400 uppercase mb-2">
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 uppercase">
             {daysOfWeek.map((d) => (
               <span key={d}>{d}</span>
             ))}
           </div>
 
-          {/* 7x5 Day Grid */}
-          <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium">
+          {/* Dynamic Day Grid with Padding */}
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold">
+            {/* Previous month empty padding slots */}
+            {paddingDays.map((pad) => (
+              <div key={`pad-${pad}`} className="py-1 text-slate-200">
+                &bull;
+              </div>
+            ))}
+
+            {/* Current month days */}
             {calendarDays.map((day) => {
-              if (day === 2) {
-                return (
-                  <div key={day} className="flex items-center justify-center py-1">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-50 text-rose-500 font-bold border border-rose-200">
-                      {day}
-                    </span>
-                  </div>
-                );
-              }
-              if (day === 18) {
-                return (
-                  <div key={day} className="flex items-center justify-center py-1">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3B4EF8] text-white font-bold shadow-xs">
-                      {day}
-                    </span>
-                  </div>
-                );
-              }
-              if (day === 25) {
-                return (
-                  <div key={day} className="flex items-center justify-center py-1">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-amber-600 font-bold border border-amber-200">
-                      {day}
-                    </span>
-                  </div>
-                );
-              }
+              const isSelected = selectedDay === day;
+              const hasEvents = !!scheduleAppointments[day];
+
               return (
-                <div
-                  key={day}
-                  className="py-1 text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  {day}
+                <div key={day} className="flex flex-col items-center justify-center py-0.5">
+                  <button
+                    onClick={() => setSelectedDay(day)}
+                    className={`h-7 w-7 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#3B4EF8] text-white font-bold shadow-md shadow-[#3B4EF8]/25 scale-105'
+                        : hasEvents
+                        ? 'bg-[#F0F4FE] text-[#3B4EF8] font-bold hover:bg-[#E0E9FD]'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {day}
+                  </button>
+                  {hasEvents && !isSelected && (
+                    <span className="h-1 w-1 rounded-full bg-[#3B4EF8] mt-0.5"></span>
+                  )}
                 </div>
               );
             })}
+          </div>
+
+          {/* Selected Day Agenda Drawer */}
+          <div className="pt-3 border-t border-slate-100 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#1E2438]">
+                {currentMonthName.slice(0, 3)} {selectedDay} Agenda
+              </span>
+              <span className="text-[10px] text-slate-400 font-semibold">
+                {scheduleAppointments[selectedDay]?.length || 0} consultations
+              </span>
+            </div>
+
+            {scheduleAppointments[selectedDay] && scheduleAppointments[selectedDay].length > 0 ? (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {scheduleAppointments[selectedDay].map((apt) => (
+                  <div
+                    key={apt.id}
+                    className="p-2.5 rounded-2xl bg-[#F6F8FB] border border-slate-100 flex flex-col space-y-1 text-xs"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[#3B4EF8] text-[11px]">{apt.time}</span>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                          apt.status === 'In Progress'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : apt.status === 'Confirmed'
+                            ? 'bg-[#EEF2FC] text-[#3B4EF8]'
+                            : 'bg-amber-50 text-amber-700'
+                        }`}
+                      >
+                        {apt.status}
+                      </span>
+                    </div>
+                    <div className="font-bold text-[#1E2438]">{apt.doctor}</div>
+                    <div className="text-[11px] text-slate-500 font-medium">
+                      Patient: <span className="text-[#1E2438] font-semibold">{apt.patient}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-3 rounded-2xl bg-[#F6F8FB] text-center space-y-1.5">
+                <p className="text-[11px] text-slate-400">
+                  No appointments scheduled for {currentMonthName.slice(0, 3)} {selectedDay}.
+                </p>
+                <Link
+                  to="/mappings"
+                  className="inline-block rounded-full bg-[#3B4EF8] hover:bg-[#2A3BD9] text-white px-3 py-1 text-[10px] font-bold shadow-2xs transition-colors"
+                >
+                  + Assign Doctor
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
