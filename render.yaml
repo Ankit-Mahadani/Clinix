@@ -35,12 +35,10 @@ services:
       - key: SEED_DEMO
         value: "true"
 
-  # 2. React Vite Frontend Static Site
+  # 2. React Vite Frontend Static Site (Served via Render Global CDN)
   - type: web
     name: meditrack-frontend
     runtime: static
-    region: oregon
-    plan: free
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: "frontend/dist"
     routes:
@@ -53,4 +51,3 @@ services:
           type: web
           name: meditrack-api
           envVarKey: RENDER_EXTERNAL_URL
-          value: "${RENDER_EXTERNAL_URL}/api"
