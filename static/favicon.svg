@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Brand Royal Blue Squircle Background -->
+  <rect width="64" height="64" rx="18" fill="#3B4EF8" />
+
+  <!-- Subtle Inner Gradient Overlay for Depth -->
+  <rect width="64" height="64" rx="18" fill="url(#clinix_glow)" />
+
+  <!-- Crisp White Medical Cross (Rounded Pill Style) -->
+  <rect x="24" y="12" width="16" height="40" rx="8" fill="#FFFFFF" />
+  <rect x="12" y="24" width="40" height="16" rx="8" fill="#FFFFFF" />
+
+  <!-- Center Active Health Spark / Cross Core -->
+  <circle cx="32" cy="32" r="4.5" fill="#3B4EF8" />
+  <circle cx="32" cy="32" r="2.2" fill="#38BDF8" />
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="clinix_glow" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5568FE" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#2434D6" stop-opacity="0.9" />
+    </linearGradient>
+  </defs>
+</svg>
