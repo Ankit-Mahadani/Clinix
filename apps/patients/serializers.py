@@ -1,6 +1,7 @@
 import re
+
 from rest_framework import serializers
-from apps.doctors.models import Doctor
+
 from apps.patients.models import Patient
 
 

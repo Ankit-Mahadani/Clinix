@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from apps.doctors.models import Doctor
 
 
@@ -61,7 +62,9 @@ class DoctorSerializer(serializers.ModelSerializer):
         if instance:
             qs = qs.exclude(pk=instance.pk)
         if qs.exists():
-            raise serializers.ValidationError("A doctor with this medical license number already exists.")
+            raise serializers.ValidationError(
+                "A doctor with this medical license number already exists."
+            )
         return trimmed
 
     def create(self, validated_data):

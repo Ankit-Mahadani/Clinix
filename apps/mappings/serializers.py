@@ -1,15 +1,12 @@
 from rest_framework import serializers
-from apps.doctors.models import Doctor
+
 from apps.mappings.models import PatientDoctorMapping
-from apps.patients.models import Patient
 
 
 class PatientDoctorMappingSerializer(serializers.ModelSerializer):
     patient_name = serializers.CharField(source="patient.name", read_only=True)
     doctor_name = serializers.CharField(source="doctor.name", read_only=True)
-    doctor_specialization = serializers.CharField(
-        source="doctor.specialization", read_only=True
-    )
+    doctor_specialization = serializers.CharField(source="doctor.specialization", read_only=True)
     doctor_hospital = serializers.CharField(source="doctor.hospital", read_only=True)
     doctor_phone = serializers.CharField(source="doctor.phone", read_only=True)
     consultation_fee = serializers.DecimalField(
@@ -51,9 +48,7 @@ class PatientDoctorMappingSerializer(serializers.ModelSerializer):
 
         # Ensure patient belongs to requesting user
         if value.created_by_id != request.user.id or value.is_deleted:
-            raise serializers.ValidationError(
-                "Specified patient does not exist in your account."
-            )
+            raise serializers.ValidationError("Specified patient does not exist in your account.")
         return value
 
     def validate(self, attrs):

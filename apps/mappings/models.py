@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from django.utils import timezone
+
 from apps.core.models import TimeStampedModel
 
 
@@ -44,9 +45,9 @@ class PatientDoctorMapping(TimeStampedModel):
         # If this mapping is set as primary, demote any other existing primary doctor for this patient.
         with transaction.atomic():
             if self.is_primary:
-                PatientDoctorMapping.objects.filter(
-                    patient=self.patient, is_primary=True
-                ).exclude(pk=self.pk).update(is_primary=False)
+                PatientDoctorMapping.objects.filter(patient=self.patient, is_primary=True).exclude(
+                    pk=self.pk
+                ).update(is_primary=False)
             super().save(*args, **kwargs)
 
     def __str__(self):

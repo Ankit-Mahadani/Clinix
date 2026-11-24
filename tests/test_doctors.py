@@ -1,5 +1,6 @@
 import pytest
 from rest_framework import status
+
 from apps.doctors.models import Doctor
 
 
@@ -39,9 +40,7 @@ class TestDoctors:
         assert sample_doctor_a.id in ids_a
         assert sample_doctor_b.id in ids_a
 
-    def test_update_doctor_permissions(
-        self, auth_client_a, auth_client_b, sample_doctor_a
-    ):
+    def test_update_doctor_permissions(self, auth_client_a, auth_client_b, sample_doctor_a):
         # Creator (Client A) can update
         res_owner = auth_client_a.patch(
             f"/api/doctors/{sample_doctor_a.id}/",
@@ -60,9 +59,7 @@ class TestDoctors:
         assert res_non_owner.status_code == status.HTTP_403_FORBIDDEN
         assert res_non_owner.json()["error"]["code"] == "PERMISSION_DENIED"
 
-    def test_delete_doctor_permissions(
-        self, auth_client_a, auth_client_b, sample_doctor_a
-    ):
+    def test_delete_doctor_permissions(self, auth_client_a, auth_client_b, sample_doctor_a):
         # Non-creator receives 403
         res_non_owner = auth_client_b.delete(f"/api/doctors/{sample_doctor_a.id}/")
         assert res_non_owner.status_code == status.HTTP_403_FORBIDDEN
@@ -73,9 +70,7 @@ class TestDoctors:
         assert res_owner.status_code == status.HTTP_200_OK
         assert not Doctor.objects.filter(id=sample_doctor_a.id).exists()
 
-    def test_duplicate_license_number_validation(
-        self, auth_client_a, sample_doctor_a
-    ):
+    def test_duplicate_license_number_validation(self, auth_client_a, sample_doctor_a):
         payload = {
             "name": "Imposter Doctor",
             "specialization": "General",

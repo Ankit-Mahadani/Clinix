@@ -1,5 +1,6 @@
 import pytest
 from rest_framework import status
+
 from apps.patients.models import Patient
 
 
@@ -58,9 +59,7 @@ class TestPatients:
         assert res_unauthorized.status_code == status.HTTP_404_NOT_FOUND
         assert res_unauthorized.json()["success"] is False
 
-    def test_update_patient_owner_isolation(
-        self, auth_client_a, auth_client_b, sample_patient_a
-    ):
+    def test_update_patient_owner_isolation(self, auth_client_a, auth_client_b, sample_patient_a):
         # Owner can update
         res = auth_client_a.patch(
             f"/api/patients/{sample_patient_a.id}/",
@@ -78,13 +77,9 @@ class TestPatients:
         )
         assert res_unauthorized.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_delete_patient_owner_isolation(
-        self, auth_client_a, auth_client_b, sample_patient_a
-    ):
+    def test_delete_patient_owner_isolation(self, auth_client_a, auth_client_b, sample_patient_a):
         # Non-owner cannot delete
-        res_unauthorized = auth_client_b.delete(
-            f"/api/patients/{sample_patient_a.id}/"
-        )
+        res_unauthorized = auth_client_b.delete(f"/api/patients/{sample_patient_a.id}/")
         assert res_unauthorized.status_code == status.HTTP_404_NOT_FOUND
         assert Patient.objects.filter(id=sample_patient_a.id).exists()
 
@@ -94,9 +89,7 @@ class TestPatients:
         assert not Patient.objects.filter(id=sample_patient_a.id).exists()
 
     def test_soft_delete_option(self, auth_client_a, sample_patient_a):
-        res = auth_client_a.delete(
-            f"/api/patients/{sample_patient_a.id}/?soft=true"
-        )
+        res = auth_client_a.delete(f"/api/patients/{sample_patient_a.id}/?soft=true")
         assert res.status_code == status.HTTP_200_OK
         assert res.json()["data"]["soft_deleted"] is True
 
@@ -131,8 +124,12 @@ class TestPatients:
         assert res3.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_search_and_filter(self, auth_client_a, user_a):
-        Patient.objects.create(name="Leonard McCoy", age=50, gender="M", blood_group="O+", created_by=user_a)
-        Patient.objects.create(name="Beverly Crusher", age=45, gender="F", blood_group="A+", created_by=user_a)
+        Patient.objects.create(
+            name="Leonard McCoy", age=50, gender="M", blood_group="O+", created_by=user_a
+        )
+        Patient.objects.create(
+            name="Beverly Crusher", age=45, gender="F", blood_group="A+", created_by=user_a
+        )
 
         # Search by name
         res_search = auth_client_a.get("/api/patients/?search=Beverly")

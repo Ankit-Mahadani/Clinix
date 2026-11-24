@@ -1,8 +1,9 @@
 from datetime import timedelta
+
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions
 from rest_framework.views import APIView
 
@@ -42,9 +43,7 @@ class DashboardStatsView(APIView):
 
         # Patients with no doctor assigned
         unassigned_patients_count = (
-            user_patients_qs.annotate(doc_count=Count("mappings"))
-            .filter(doc_count=0)
-            .count()
+            user_patients_qs.annotate(doc_count=Count("mappings")).filter(doc_count=0).count()
         )
 
         # 2. Top Doctor Specializations (Catalog distribution)
@@ -75,9 +74,7 @@ class DashboardStatsView(APIView):
 
         # 4. Gender breakdown for user's patients
         gender_breakdown = list(
-            user_patients_qs.values("gender")
-            .annotate(count=Count("id"))
-            .order_by("-count")
+            user_patients_qs.values("gender").annotate(count=Count("id")).order_by("-count")
         )
 
         data = {

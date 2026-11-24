@@ -1,16 +1,14 @@
 import pytest
 from rest_framework import status
+
 from apps.audit.models import AuditLog
-from apps.doctors.models import Doctor
 from apps.mappings.models import PatientDoctorMapping
 from apps.patients.models import Patient
 
 
 @pytest.mark.django_db
 class TestDashboardAndCore:
-    def test_dashboard_stats(
-        self, auth_client_a, user_a, sample_patient_a, sample_doctor_a
-    ):
+    def test_dashboard_stats(self, auth_client_a, user_a, sample_patient_a, sample_doctor_a):
         # Create unassigned patient
         Patient.objects.create(name="Unassigned Patient", age=40, gender="F", created_by=user_a)
 

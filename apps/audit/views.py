@@ -23,8 +23,4 @@ class AuditLogListView(ListAPIView):
     )
     def get_queryset(self):
         user = self.request.user
-        return (
-            AuditLog.objects.filter(user=user)
-            .select_related("user")
-            .order_by("-timestamp")
-        )
+        return AuditLog.objects.filter(user=user).select_related("user").order_by("-timestamp")

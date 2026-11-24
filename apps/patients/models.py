@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from apps.core.models import SoftDeleteModel, TimeStampedModel
 
 
@@ -29,9 +30,7 @@ class Patient(TimeStampedModel, SoftDeleteModel):
         db_index=True,
     )
     name = models.CharField(max_length=255, db_index=True)
-    age = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(150)]
-    )
+    age = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(150)])
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES)
     dob = models.DateField(null=True, blank=True, verbose_name="Date of Birth")
     blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES, blank=True)

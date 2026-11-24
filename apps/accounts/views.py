@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
@@ -105,7 +105,7 @@ class TokenRefreshView(BaseTokenRefreshView):
         try:
             serializer.is_valid(raise_exception=True)
         except TokenError as e:
-            raise InvalidToken(e.args[0])
+            raise InvalidToken(e.args[0]) from e
 
         return api_success(
             data=serializer.validated_data,
@@ -169,9 +169,7 @@ class UserProfileView(APIView):
         responses={200: UserSerializer},
     )
     def patch(self, request):
-        serializer = UserProfileUpdateSerializer(
-            request.user, data=request.data, partial=True
-        )
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

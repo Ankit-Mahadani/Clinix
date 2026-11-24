@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 
@@ -41,15 +41,11 @@ class MappingListCreateView(APIView):
         responses={201: PatientDoctorMappingSerializer},
     )
     def post(self, request):
-        serializer = PatientDoctorMappingSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = PatientDoctorMappingSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         mapping = serializer.save()
         return api_success(
-            data=PatientDoctorMappingSerializer(
-                mapping, context={"request": request}
-            ).data,
+            data=PatientDoctorMappingSerializer(mapping, context={"request": request}).data,
             message="Doctor assigned to patient successfully.",
             status_code=status.HTTP_201_CREATED,
         )
@@ -65,9 +61,7 @@ class MappingDetailView(APIView):
     )
     def get(self, request, pk):
         # 1. Check if pk is a patient_id belonging to this user
-        patient = Patient.objects.filter(
-            pk=pk, created_by=request.user, is_deleted=False
-        ).first()
+        patient = Patient.objects.filter(pk=pk, created_by=request.user, is_deleted=False).first()
 
         if patient:
             mappings = (
@@ -88,23 +82,23 @@ class MappingDetailView(APIView):
             )
 
         # 2. Check if pk corresponds to a mapping ID owned by this user
-        mapping = PatientDoctorMapping.objects.filter(
-            pk=pk, patient__created_by=request.user, patient__is_deleted=False
-        ).select_related("patient", "doctor").first()
+        mapping = (
+            PatientDoctorMapping.objects.filter(
+                pk=pk, patient__created_by=request.user, patient__is_deleted=False
+            )
+            .select_related("patient", "doctor")
+            .first()
+        )
 
         if mapping:
-            serializer = PatientDoctorMappingSerializer(
-                mapping, context={"request": request}
-            )
+            serializer = PatientDoctorMappingSerializer(mapping, context={"request": request})
             return api_success(
                 data=serializer.data,
                 message="Mapping details retrieved successfully.",
             )
 
         # 3. Not found or not owned -> return 404 (never leak existence)
-        return get_object_or_404(
-            Patient, pk=pk, created_by=request.user, is_deleted=False
-        )
+        return get_object_or_404(Patient, pk=pk, created_by=request.user, is_deleted=False)
 
     @extend_schema(
         summary="Remove doctor assignment",

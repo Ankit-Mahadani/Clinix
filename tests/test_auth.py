@@ -1,5 +1,6 @@
 import pytest
 from rest_framework import status
+
 from apps.accounts.models import User
 
 

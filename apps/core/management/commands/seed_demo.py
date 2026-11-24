@@ -1,6 +1,8 @@
 import datetime
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+
 from apps.accounts.models import User
 from apps.doctors.models import Doctor
 from apps.mappings.models import PatientDoctorMapping
@@ -162,7 +164,9 @@ class Command(BaseCommand):
             created_doctors.append(doctor_obj)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Seeded {len(created_doctors)} doctor profiles across specializations.")
+            self.style.SUCCESS(
+                f"Seeded {len(created_doctors)} doctor profiles across specializations."
+            )
         )
 
         # 4. Patients (~15 Realistic Patients for Demo User)
@@ -387,7 +391,7 @@ class Command(BaseCommand):
                 defaults={**pat, "created_by": demo_user, "is_active": True},
             )
             # Stagger created_at across past 6 months to populate the intake chart
-            months_back = (i % 6)
+            months_back = i % 6
             fake_created_time = timezone.now() - datetime.timedelta(days=months_back * 30 + (i * 2))
             Patient.objects.filter(pk=patient_obj.pk).update(created_at=fake_created_time)
             created_patients.append(patient_obj)
@@ -426,34 +430,136 @@ class Command(BaseCommand):
         # Assign doctors to first 12 patients; leave the last 3 with no doctor assigned
         mappings_data = [
             # James Wilson (Heart + Primary Care)
-            (created_patients[0], created_doctors[0], True, "active", "Regular follow-up for hypertensive medication and ECG monitor."),
-            (created_patients[0], created_doctors[9], False, "active", "Annual wellness exams and routine blood panels."),
+            (
+                created_patients[0],
+                created_doctors[0],
+                True,
+                "active",
+                "Regular follow-up for hypertensive medication and ECG monitor.",
+            ),
+            (
+                created_patients[0],
+                created_doctors[9],
+                False,
+                "active",
+                "Annual wellness exams and routine blood panels.",
+            ),
             # Clara Oswald (Pediatrics / Pulmonology)
-            (created_patients[1], created_doctors[3], True, "active", "Asthma management action plan and allergy check."),
+            (
+                created_patients[1],
+                created_doctors[3],
+                True,
+                "active",
+                "Asthma management action plan and allergy check.",
+            ),
             # Liam Gallagher (Pediatrics)
-            (created_patients[2], created_doctors[3], True, "active", "Growth tracking and school sports clearance checkup."),
+            (
+                created_patients[2],
+                created_doctors[3],
+                True,
+                "active",
+                "Growth tracking and school sports clearance checkup.",
+            ),
             # Vivian Thorne (Orthopedics + Neurology)
-            (created_patients[3], created_doctors[2], True, "active", "Knee joint injections scheduled next month."),
-            (created_patients[3], created_doctors[1], False, "active", "Annual memory assessment and neurological reflex exam."),
+            (
+                created_patients[3],
+                created_doctors[2],
+                True,
+                "active",
+                "Knee joint injections scheduled next month.",
+            ),
+            (
+                created_patients[3],
+                created_doctors[1],
+                False,
+                "active",
+                "Annual memory assessment and neurological reflex exam.",
+            ),
             # Ethan Vance (Orthopedics)
-            (created_patients[4], created_doctors[2], True, "active", "Physical therapy referral following lumbar MRI."),
+            (
+                created_patients[4],
+                created_doctors[2],
+                True,
+                "active",
+                "Physical therapy referral following lumbar MRI.",
+            ),
             # Ananya Roy (Neurology + Endocrinology)
-            (created_patients[5], created_doctors[1], True, "active", "Migraine preventative medication titration."),
-            (created_patients[5], created_doctors[6], False, "active", "TSH level review every 6 months."),
+            (
+                created_patients[5],
+                created_doctors[1],
+                True,
+                "active",
+                "Migraine preventative medication titration.",
+            ),
+            (
+                created_patients[5],
+                created_doctors[6],
+                False,
+                "active",
+                "TSH level review every 6 months.",
+            ),
             # Mateo Fernandez (Gastroenterology)
-            (created_patients[6], created_doctors[8], True, "active", "Endoscopy follow-up and proton pump inhibitor review."),
+            (
+                created_patients[6],
+                created_doctors[8],
+                True,
+                "active",
+                "Endoscopy follow-up and proton pump inhibitor review.",
+            ),
             # Harper Evans (Pediatrics + Dermatology)
-            (created_patients[7], created_doctors[3], True, "active", "General wellness and pediatric vaccinations."),
-            (created_patients[7], created_doctors[5], False, "active", "Topical management of pediatric atopic eczema."),
+            (
+                created_patients[7],
+                created_doctors[3],
+                True,
+                "active",
+                "General wellness and pediatric vaccinations.",
+            ),
+            (
+                created_patients[7],
+                created_doctors[5],
+                False,
+                "active",
+                "Topical management of pediatric atopic eczema.",
+            ),
             # Dmitri Volkov (Cardiology + Oncology)
-            (created_patients[8], created_doctors[0], True, "active", "Post-coronary stent cardiac rehab surveillance."),
-            (created_patients[8], created_doctors[4], False, "active", "Routine surveillance screening."),
+            (
+                created_patients[8],
+                created_doctors[0],
+                True,
+                "active",
+                "Post-coronary stent cardiac rehab surveillance.",
+            ),
+            (
+                created_patients[8],
+                created_doctors[4],
+                False,
+                "active",
+                "Routine surveillance screening.",
+            ),
             # Zoe Bell (General Medicine)
-            (created_patients[9], created_doctors[9], True, "active", "CBC checkup and dietary iron consultation."),
+            (
+                created_patients[9],
+                created_doctors[9],
+                True,
+                "active",
+                "CBC checkup and dietary iron consultation.",
+            ),
             # Lucas Dupont (Psychiatry)
-            (created_patients[10], created_doctors[7], True, "active", "Bi-weekly psychotherapy check-ins and medication review."),
+            (
+                created_patients[10],
+                created_doctors[7],
+                True,
+                "active",
+                "Bi-weekly psychotherapy check-ins and medication review.",
+            ),
             # Fatima Khan (Endocrinology)
-            (created_patients[11], created_doctors[6], True, "active", "Fasting glucose and HbA1c review."),
+            (
+                created_patients[11],
+                created_doctors[6],
+                True,
+                "active",
+                "Fasting glucose and HbA1c review.",
+            ),
         ]
 
         assigned_count = 0

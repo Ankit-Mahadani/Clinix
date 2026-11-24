@@ -1,6 +1,8 @@
 import logging
+
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+
 from apps.audit.models import AuditLog
 from apps.doctors.models import Doctor
 from apps.mappings.models import PatientDoctorMapping

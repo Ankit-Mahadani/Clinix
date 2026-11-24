@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import RefreshToken
+
 from apps.accounts.models import User
 
 
@@ -83,9 +83,7 @@ class LoginSerializer(serializers.Serializer):
             )
 
         if not user.is_active:
-            raise serializers.ValidationError(
-                {"detail": "This account is currently deactivated."}
-            )
+            raise serializers.ValidationError({"detail": "This account is currently deactivated."})
 
         attrs["user"] = user
         return attrs

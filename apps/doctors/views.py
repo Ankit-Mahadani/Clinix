@@ -1,7 +1,6 @@
-from drf_spectacular.utils import extend_schema
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.core.permissions import IsOwnerOrReadOnly
 from apps.core.responses import api_success

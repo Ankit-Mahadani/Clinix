@@ -1,4 +1,5 @@
 from rest_framework.routers import DefaultRouter
+
 from apps.doctors.views import DoctorViewSet
 
 app_name = "doctors"

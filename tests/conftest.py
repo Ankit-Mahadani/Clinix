@@ -1,8 +1,8 @@
 import pytest
 from rest_framework.test import APIClient
+
 from apps.accounts.models import User
 from apps.doctors.models import Doctor
-from apps.mappings.models import PatientDoctorMapping
 from apps.patients.models import Patient
 
 

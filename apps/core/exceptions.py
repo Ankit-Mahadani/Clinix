@@ -1,6 +1,6 @@
 import logging
+
 from rest_framework import status
-from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -23,7 +23,9 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is None:
-        logger.exception("Unhandled Exception encountered: %s", str(exc), exc_info=context.get("request"))
+        logger.exception(
+            "Unhandled Exception encountered: %s", str(exc), exc_info=context.get("request")
+        )
         return Response(
             {
                 "success": False,
@@ -65,7 +67,11 @@ def custom_exception_handler(exc, context):
                 details = {}
         elif "non_field_errors" in details:
             first_err = details["non_field_errors"]
-            message = str(first_err[0]) if isinstance(first_err, (list, tuple)) and first_err else str(first_err)
+            message = (
+                str(first_err[0])
+                if isinstance(first_err, (list, tuple)) and first_err
+                else str(first_err)
+            )
         else:
             first_field = next(iter(details))
             val = details[first_field]

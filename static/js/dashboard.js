@@ -35,7 +35,7 @@ const DashboardModule = (() => {
 
   const renderMonthlyChart = (trendData) => {
     const ctx = document.getElementById("chart-monthly-intake");
-    if (!ctx) return;
+    if (!ctx || typeof Chart === "undefined") return;
 
     if (monthlyChartInstance) {
       monthlyChartInstance.destroy();
@@ -112,7 +112,7 @@ const DashboardModule = (() => {
 
   const renderSpecializationChart = (specData) => {
     const ctx = document.getElementById("chart-specialization");
-    if (!ctx) return;
+    if (!ctx || typeof Chart === "undefined") return;
 
     if (specChartInstance) {
       specChartInstance.destroy();

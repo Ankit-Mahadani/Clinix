@@ -1,13 +1,12 @@
 import pytest
 from rest_framework import status
+
 from apps.mappings.models import PatientDoctorMapping
 
 
 @pytest.mark.django_db
 class TestMappings:
-    def test_assign_doctor_success(
-        self, auth_client_a, sample_patient_a, sample_doctor_a
-    ):
+    def test_assign_doctor_success(self, auth_client_a, sample_patient_a, sample_doctor_a):
         payload = {
             "patient": sample_patient_a.id,
             "doctor": sample_doctor_a.id,
@@ -41,13 +40,9 @@ class TestMappings:
         assert data["success"] is False
         assert "patient" in data["error"]["details"]
 
-    def test_duplicate_mapping_clean_400(
-        self, auth_client_a, sample_patient_a, sample_doctor_a
-    ):
+    def test_duplicate_mapping_clean_400(self, auth_client_a, sample_patient_a, sample_doctor_a):
         # First assignment succeeds
-        PatientDoctorMapping.objects.create(
-            patient=sample_patient_a, doctor=sample_doctor_a
-        )
+        PatientDoctorMapping.objects.create(patient=sample_patient_a, doctor=sample_doctor_a)
 
         # Duplicate assignment attempt
         payload = {
@@ -98,12 +93,8 @@ class TestMappings:
     def test_list_mappings_scoped_to_user_patients(
         self, auth_client_a, auth_client_b, sample_patient_a, sample_patient_b, sample_doctor_a
     ):
-        m_a = PatientDoctorMapping.objects.create(
-            patient=sample_patient_a, doctor=sample_doctor_a
-        )
-        m_b = PatientDoctorMapping.objects.create(
-            patient=sample_patient_b, doctor=sample_doctor_a
-        )
+        m_a = PatientDoctorMapping.objects.create(patient=sample_patient_a, doctor=sample_doctor_a)
+        m_b = PatientDoctorMapping.objects.create(patient=sample_patient_b, doctor=sample_doctor_a)
 
         # Client A should only see m_a
         res_a = auth_client_a.get("/api/mappings/")
@@ -115,9 +106,7 @@ class TestMappings:
     def test_get_mappings_by_patient_id(
         self, auth_client_a, auth_client_b, sample_patient_a, sample_doctor_a
     ):
-        PatientDoctorMapping.objects.create(
-            patient=sample_patient_a, doctor=sample_doctor_a
-        )
+        PatientDoctorMapping.objects.create(patient=sample_patient_a, doctor=sample_doctor_a)
 
         # Client A requests assigned doctors for their patient
         res = auth_client_a.get(f"/api/mappings/{sample_patient_a.id}/")
@@ -130,9 +119,7 @@ class TestMappings:
         res_unauthorized = auth_client_b.get(f"/api/mappings/{sample_patient_a.id}/")
         assert res_unauthorized.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_delete_mapping(
-        self, auth_client_a, auth_client_b, sample_patient_a, sample_doctor_a
-    ):
+    def test_delete_mapping(self, auth_client_a, auth_client_b, sample_patient_a, sample_doctor_a):
         mapping = PatientDoctorMapping.objects.create(
             patient=sample_patient_a, doctor=sample_doctor_a
         )
