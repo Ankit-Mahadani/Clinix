@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -14,7 +15,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,0.0.0.0,web",
+    default="localhost,127.0.0.1,0.0.0.0,web,.onrender.com,.railway.app,.fly.dev,.vercel.app",
     cast=Csv(),
 )
 
@@ -52,6 +53,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "apps.core.middleware.RequestIDMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -84,26 +86,37 @@ TEMPLATES = [
 WSGI_APPLICATION = "meditrack.wsgi.application"
 ASGI_APPLICATION = "meditrack.asgi.application"
 
-# Database configuration
-DB_ENGINE = config("DB_ENGINE", default="django.db.backends.sqlite3")
-if DB_ENGINE == "django.db.backends.sqlite3":
+# Database configuration (Zero-config DATABASE_URL with fallback)
+DATABASE_URL = config("DATABASE_URL", default=None)
+if DATABASE_URL:
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / config("DB_NAME", default="db.sqlite3"),
-        }
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=config("DB_SSL_REQUIRE", default=False, cast=bool),
+        )
     }
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": DB_ENGINE,
-            "NAME": config("DB_NAME", default="meditrack_db"),
-            "USER": config("DB_USER", default="meditrack_user"),
-            "PASSWORD": config("DB_PASSWORD", default="meditrack_password"),
-            "HOST": config("DB_HOST", default="localhost"),
-            "PORT": config("DB_PORT", default="5432"),
+    DB_ENGINE = config("DB_ENGINE", default="django.db.backends.sqlite3")
+    if DB_ENGINE == "django.db.backends.sqlite3":
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / config("DB_NAME", default="db.sqlite3"),
+            }
         }
-    }
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": DB_ENGINE,
+                "NAME": config("DB_NAME", default="meditrack_db"),
+                "USER": config("DB_USER", default="meditrack_user"),
+                "PASSWORD": config("DB_PASSWORD", default="meditrack_password"),
+                "HOST": config("DB_HOST", default="localhost"),
+                "PORT": config("DB_PORT", default="5432"),
+            }
+        }
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
@@ -130,19 +143,34 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# CORS configuration
+# CORS & CSRF configuration
 CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default=False, cast=bool)
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000",
+    default="http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000,https://*.onrender.com,https://*.railway.app,https://*.fly.dev,https://*.vercel.app,https://*.netlify.app",
     cast=Csv(),
 )
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000,https://*.onrender.com,https://*.railway.app,https://*.fly.dev,https://*.vercel.app,https://*.netlify.app",
+    cast=Csv(),
+)
 
 # Django REST Framework
 REST_FRAMEWORK = {

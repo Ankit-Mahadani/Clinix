@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.doctors.models import Doctor
@@ -34,6 +35,7 @@ class DoctorSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+    @extend_schema_field(serializers.BooleanField)
     def get_is_creator(self, obj):
         request = self.context.get("request")
         if request and hasattr(request, "user") and request.user.is_authenticated:

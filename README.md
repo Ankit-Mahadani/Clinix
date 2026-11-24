@@ -292,7 +292,21 @@ npm run dev
 
 ---
 
-## 🔑 Demo Credentials
+### Option C: Cloud Hosting & 1-Click Deployment
+
+MediTrack is production-ready for deployment across major cloud providers:
+
+| Platform | Deployment Method | Configuration File |
+|---|---|---|
+| **Render** | 1-Click Blueprint (Database + API + Frontend) | [`render.yaml`](render.yaml) & [`render_build.sh`](render_build.sh) |
+| **Railway** | Native Procfile / Docker deployment | [`Procfile`](Procfile) & [`railway.json`](railway.json) |
+| **Fly.io** | MicroVM deployment with Health checks | [`fly.toml`](fly.toml) |
+| **AWS / VPS / DigitalOcean** | Production Docker Compose stack | [`docker-compose.prod.yml`](docker-compose.prod.yml) |
+| **Vercel / Netlify** | Standalone React SPA deployment | [`frontend/vercel.json`](frontend/vercel.json) & [`frontend/netlify.toml`](frontend/netlify.toml) |
+
+👉 **Read the complete [Production Deployment Guide](docs/DEPLOYMENT_GUIDE.md) for step-by-step instructions.**
+
+---
 
 | Role | Email | Password | Pre-seeded Resources |
 |---|---|---|---|

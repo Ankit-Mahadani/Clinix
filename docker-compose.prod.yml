@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: meditrack_prod_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-meditrack_db}
+      POSTGRES_USER: ${DB_USER:-meditrack_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-meditrack_secure_password_2026}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-meditrack_user} -d ${DB_NAME:-meditrack_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meditrack_prod_net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: meditrack_prod_api
+    restart: always
+    command: /app/entrypoint.sh
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=meditrack.settings.prod
+      - SECRET_KEY=${SECRET_KEY:-meditrack-prod-super-secure-key-replace-in-env-982182}
+      - DEBUG=False
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=${DB_NAME:-meditrack_db}
+      - DB_USER=${DB_USER:-meditrack_user}
+      - DB_PASSWORD=${DB_PASSWORD:-meditrack_secure_password_2026}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CORS_ALLOW_ALL_ORIGINS=True
+      - SEED_DEMO=true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - meditrack_prod_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: meditrack_prod_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api}
+    depends_on:
+      - api
+    networks:
+      - meditrack_prod_net
+
+volumes:
+  postgres_prod_data:
+    name: meditrack_postgres_prod_data
+
+networks:
+  meditrack_prod_net:
+    name: meditrack_prod_net

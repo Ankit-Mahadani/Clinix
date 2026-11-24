@@ -1,5 +1,5 @@
-from drf_spectacular.utils import OpenApiResponse, extend_schema
-from rest_framework import permissions, status
+from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
+from rest_framework import permissions, serializers, status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -120,6 +120,9 @@ class LogoutView(APIView):
     @extend_schema(
         summary="Logout & Blacklist Refresh Token",
         description="Invalidates and blacklists the provided refresh token, effectively terminating the session.",
+        request=inline_serializer(
+            "LogoutRequest", fields={"refresh": serializers.CharField(required=False)}
+        ),
         responses={200: OpenApiResponse(description="Logged out successfully")},
     )
     def post(self, request):

@@ -1,5 +1,6 @@
 import re
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.patients.models import Patient
@@ -90,6 +91,7 @@ class PatientDetailSerializer(PatientSerializer):
     class Meta(PatientSerializer.Meta):
         fields = PatientSerializer.Meta.fields + ("assigned_doctors",)
 
+    @extend_schema_field(serializers.ListField(child=serializers.DictField()))
     def get_assigned_doctors(self, obj):
         mappings = obj.mappings.select_related("doctor").all()
         result = []
