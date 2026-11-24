@@ -47,12 +47,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     const res = await api.auth.login({ email, password });
     if (res.success && res.data) {
-      const { user: userData, tokens } = res.data;
-      localStorage.setItem('access_token', tokens.access);
-      localStorage.setItem('refresh_token', tokens.refresh);
-      localStorage.setItem('user', JSON.stringify(userData));
+      const data = res.data as any;
+      const userData = data.user;
+      const accessToken = data.access || data.tokens?.access;
+      const refreshToken = data.refresh || data.tokens?.refresh;
+
+      if (!accessToken) {
+        throw new Error('Authentication failed: access token not received from server.');
+      }
+
+      localStorage.setItem('access_token', accessToken);
+      if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+      if (userData) localStorage.setItem('user', JSON.stringify(userData));
+
       setUser(userData);
-      setToken(tokens.access);
+      setToken(accessToken);
     } else {
       throw new Error(res.error?.message || 'Login failed');
     }
@@ -65,12 +74,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string, password2: string) => {
     const res = await api.auth.register({ name, email, password, password2 });
     if (res.success && res.data) {
-      const { user: userData, tokens } = res.data;
-      localStorage.setItem('access_token', tokens.access);
-      localStorage.setItem('refresh_token', tokens.refresh);
-      localStorage.setItem('user', JSON.stringify(userData));
+      const data = res.data as any;
+      const userData = data.user;
+      const accessToken = data.access || data.tokens?.access;
+      const refreshToken = data.refresh || data.tokens?.refresh;
+
+      if (!accessToken) {
+        throw new Error('Registration failed: access token not received from server.');
+      }
+
+      localStorage.setItem('access_token', accessToken);
+      if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+      if (userData) localStorage.setItem('user', JSON.stringify(userData));
+
       setUser(userData);
-      setToken(tokens.access);
+      setToken(accessToken);
     } else {
       throw new Error(res.error?.message || 'Registration failed');
     }

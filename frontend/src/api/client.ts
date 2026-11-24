@@ -131,11 +131,15 @@ export const api = {
   // Auth
   auth: {
     login: async (credentials: { email: string; password: string }) => {
-      const res = await apiClient.post<ApiResponse<{ user: User; tokens: { access: string; refresh: string } }>>('/auth/login/', credentials);
+      const res = await apiClient.post<
+        ApiResponse<{ user: User; access: string; refresh: string; tokens?: { access: string; refresh: string } }>
+      >('/auth/login/', credentials);
       return res.data;
     },
     register: async (userData: { name: string; email: string; password: string; password2: string }) => {
-      const res = await apiClient.post<ApiResponse<{ user: User; tokens: { access: string; refresh: string } }>>('/auth/register/', userData);
+      const res = await apiClient.post<
+        ApiResponse<{ user: User; access: string; refresh: string; tokens?: { access: string; refresh: string } }>
+      >('/auth/register/', userData);
       return res.data;
     },
     logout: async () => {

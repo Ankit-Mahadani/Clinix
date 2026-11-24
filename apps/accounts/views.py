@@ -42,11 +42,18 @@ class RegisterView(APIView):
             details={"email": user.email, "name": user.name},
         )
 
+        access_str = str(refresh.access_token)
+        refresh_str = str(refresh)
+
         return api_success(
             data={
                 "user": user_data,
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
+                "access": access_str,
+                "refresh": refresh_str,
+                "tokens": {
+                    "access": access_str,
+                    "refresh": refresh_str,
+                },
             },
             message="User registration successful.",
             status_code=status.HTTP_201_CREATED,
@@ -79,11 +86,18 @@ class LoginView(APIView):
             details={"email": user.email},
         )
 
+        access_str = str(refresh.access_token)
+        refresh_str = str(refresh)
+
         return api_success(
             data={
                 "user": user_data,
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
+                "access": access_str,
+                "refresh": refresh_str,
+                "tokens": {
+                    "access": access_str,
+                    "refresh": refresh_str,
+                },
             },
             message="Authentication successful.",
             status_code=status.HTTP_200_OK,
